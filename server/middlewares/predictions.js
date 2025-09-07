@@ -4,6 +4,9 @@ require('dotenv').config()
 const PREDICTION_SERVER_API = 'http://localhost:5000/predict/futureTrends'
 const GOOGLE_GEN_AI_API_KEY = process.env.GEN_AI_API
 
+const genai = new GoogleGenAI({ apiKey: GOOGLE_GEN_AI_API_KEY })
+
+
 const predictFutureTrend = async (sample) => {
     try {
         const res = await fetch(PREDICTION_SERVER_API, {
@@ -24,7 +27,6 @@ const predictFutureTrend = async (sample) => {
 
 const predictHeatmapCoords = async (sample) => {
     try {
-        const genai = new GoogleGenAI({ apiKey: GOOGLE_GEN_AI_API_KEY })
         const prompt = `
         The provided water sample is collected from lat: ${sample.lat}, lon: ${sample.lon} and its contamination degree is ${sample.state}
 
@@ -68,8 +70,52 @@ const predictHeatmapCoords = async (sample) => {
 }
 
 
-const analyseWithAI = async (sample) => {
+const analyseWithAI = async (hms) => {
+    try {
+        
+        const prompt = `
+        The water has 
+        Cd: ${hms[0].val} mg/L
+        Pb: ${hms[1].val} mg/L
+        Fe: ${hms[2].val} mg/L
+        Co: ${hms[3].val} mg/L
+        Mn: ${hms[4].val} mg/L
+        Ni: ${hms[5].val} mg/L
+        Cu: ${hms[6].val} mg/L
+        Zn: ${hms[7].val} mg/L
+        
+        Predict the following :
+        {
+            deseases: [] (Put the probable deaseases with which one might be affected, with one liner description, eg, The High cadmium (Cd) levels in water can cause a range of health problems, most notably kidney damage, osteomalacia and osteoporosis.)
     
+            precautions: [] (Put the precautions one should take before taking the water)
+        }
+    
+        **Instruction**
+        1. Return ONLY the JSON-formatted string. No markdown, no code fences, no additional text.
+        2. Ensure all property names are double-quoted.
+        3. All string values must be double-quoted.
+        `
+        const response = await genai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt
+        });
+        // Extract the text response
+        const responseText = response.text;
+        console.log(response.text)
+    
+        // Clean the response to extract just the JSON portion
+        const jsonStart = responseText.indexOf('{');
+        const jsonEnd = responseText.lastIndexOf('}') + 1;
+        const jsonString = responseText.slice(jsonStart, jsonEnd);
+    
+        // Parse the JSON
+        const data = JSON.parse(jsonString)
+        console.log(data)
+        return data
+    } catch (error) {
+        console.log(error)   
+    }
 }
 
-module.exports = { predictFutureTrend, predictHeatmapCoords }
+module.exports = { predictFutureTrend, predictHeatmapCoords, analyseWithAI }

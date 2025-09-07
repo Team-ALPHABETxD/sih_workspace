@@ -1,6 +1,6 @@
 const express = require('express')
 const { gLToMgL, findCd, findHei, findSafetyDeg, findPoluDeg, findHmpi, isCriticalToDrink } = require('../middlewares/calculations')
-const { predictFutureTrend, predictHeatmapCoords } = require('../middlewares/predictions')
+const { predictFutureTrend, predictHeatmapCoords, analyseWithAI } = require('../middlewares/predictions')
 
 const router = express.Router()
 
@@ -42,6 +42,9 @@ router.post('/new', async (req, res) => {
         const fut= await predictFutureTrend(sampleForPreds)
         const hmap = await predictHeatmapCoords(sampleForPreds)
 
+        // analysis
+        const anal = await analyseWithAI(acc_hms)
+
         // generate the report
         const report = {
             cd: cd,
@@ -51,12 +54,12 @@ router.post('/new', async (req, res) => {
             pd: pd,
             isCritical: isCritical,
             fut: fut,
-            hmap: hmap
+            hmap: hmap,
+            anal: anal
         }
 
 
-        return res.status(200).json({ flag: "success", report: report})
-        
+        return res.status(200).json({ flag: "success", report: report}) 
     } catch (error) {
         console.log(error)
         return res.status(500).json({ flag: "fail", msg: "Server error."})
