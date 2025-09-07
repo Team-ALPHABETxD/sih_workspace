@@ -1,5 +1,6 @@
 const express = require('express')
 const { gLToMgL, findCd, findHei, findSafetyDeg, findPoluDeg, findHmpi, isCriticalToDrink } = require('../middlewares/calculations')
+const { predictFutureTrend, predictHeatmapCoords } = require('../middlewares/predictions')
 
 const router = express.Router()
 
@@ -31,6 +32,15 @@ router.post('/new', async (req, res) => {
         const hmpi = findHmpi(acc_hms)
         const isCritical = isCriticalToDrink(acc_hms)
 
+        // predictions
+        const sampleForPreds = {
+            lat: coords.lat,
+            lon: coords.lon,
+            year: 2025,
+            state: sd
+        }
+        const fut= await predictFutureTrend(sampleForPreds)
+        const hmap = await predictHeatmapCoords(sampleForPreds)
 
         // generate the report
         const report = {
@@ -39,7 +49,9 @@ router.post('/new', async (req, res) => {
             hmpi: hmpi,
             sd: sd,
             pd: pd,
-            isCritical: isCritical
+            isCritical: isCritical,
+            fut: fut,
+            hmap: hmap
         }
 
 
