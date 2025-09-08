@@ -119,7 +119,7 @@ export default function SignupPage() {
       }}
     >
       {/* Dark overlay and blur for better text readability */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-md"></div>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[3px]"></div>
       
       {/* Blurred Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
