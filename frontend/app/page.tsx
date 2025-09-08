@@ -90,7 +90,7 @@ export default function Home() {
         </div>
 
         {/* Charts Section */}
-<div className="mt-16 w-full max-w-6xl px-4 space-y-20">
+<div className="mt-16 w-full max-w-6xl px-4 space-y-20 text-slate-700">
   
   {/* Section 1 - Radar Chart (Left) + Paragraph (Right) */}
   <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
@@ -158,7 +158,7 @@ export default function Home() {
 </div>
 
 {/* "What They Will Get From Us" Heading */}
-<div className="mt-20 flex justify-center">
+<div className="mt-20 flex justify-center ">
   
   <WritingText
     text="What You Will Get From Us"
@@ -170,7 +170,7 @@ export default function Home() {
       delay: 0.3,
       
     }}
-    className="text-2xl font-bold"
+    className="text-2xl font-bold text-slate-600"
   />
 </div>
 
