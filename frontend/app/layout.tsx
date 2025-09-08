@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import NavbarMenu from "@/components/ui/navbar-menu";
+import ClientLayout from "./client-layout";
 
 export const metadata: Metadata = {
   title: "Metal Craft",
@@ -15,9 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-background text-foreground">
-        {/* Navbar visible on all pages */}
-        <NavbarMenu />
-        <main className="pt-24">{children}</main>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

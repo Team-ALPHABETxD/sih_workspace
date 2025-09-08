@@ -72,7 +72,7 @@ export default function SignupPage() {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+      className="min-h-screen absolute flex items-center justify-center p-4 relative overflow-hidden"
       style={{
         backgroundImage: 'url(/backimg1.jpg)',
         backgroundSize: 'cover',
@@ -81,7 +81,7 @@ export default function SignupPage() {
       }}
     >
       {/* Dark overlay and blur for better text readability */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-md"></div>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[4px]"></div>
       
       {/* Blurred Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
