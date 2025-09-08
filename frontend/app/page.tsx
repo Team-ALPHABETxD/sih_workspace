@@ -158,7 +158,7 @@ export default function Home() {
 </div>
 
 {/* "What They Will Get From Us" Heading */}
-<div className="mt-20 flex justify-center">
+<div className="mt-20 flex justify-center ">
   
   <WritingText
     text="What You Will Get From Us"
@@ -170,7 +170,7 @@ export default function Home() {
       delay: 0.3,
       
     }}
-    className="text-2xl font-bold"
+    className="text-2xl font-bold text-slate-600"
   />
 </div>
 
