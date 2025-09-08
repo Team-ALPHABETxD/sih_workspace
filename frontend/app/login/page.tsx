@@ -50,7 +50,7 @@ return (
             {/* Already member link */}
             <div className="text-right mb-4">
               <span className="text-gray-600 text-sm">Don't have an account? </span>
-              <a href="#" className="text-blue-600 font-medium hover:underline text-sm">Sign up</a>
+              <a href="/signup" className="text-blue-600 font-medium hover:underline text-sm">Sign up</a>
             </div>
 
             {/* Form */}
