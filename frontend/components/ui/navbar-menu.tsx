@@ -1,5 +1,7 @@
+// components/ui/navbar-menu.tsx
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { Transition } from "motion/react";
 import React, { useState } from "react";
 import { motion } from "motion/react";
@@ -9,18 +11,10 @@ const transition: Transition = {
   mass: 0.5,
   damping: 11.5,
   stiffness: 100,
-  // ⚠️ remove restDelta & restSpeed — not in v11 types
 };
 
-
-
-// ---------- Subcomponents ----------
-export const MenuItem = ({
-  setActive,
-  active,
-  item,
-  children,
-}: {
+// ... (MenuItem, Menu, HoveredLink components stay exactly as you already have them)
+export const MenuItem = ({ setActive, active, item, children }: {
   setActive: (item: string) => void;
   active: string | null;
   item: string;
@@ -35,32 +29,28 @@ export const MenuItem = ({
         {item}
       </motion.p>
       {active !== null && active === item && (
-<motion.div
-  initial={{ opacity: 0, scale: 0.85, y: 10 }}
-  animate={{ opacity: 1, scale: 1, y: 0 }}
-  transition={transition}
-  className="absolute top-[calc(100%+1.2rem)] left-1/2 transform -translate-x-1/2 pt-4"
->
-  <motion.div
-    transition={transition}
-    layoutId="active"
-    className="bg-gray-50 dark:bg-black backdrop-blur-sm rounded-2xl overflow-hidden border border-black/20 dark:border-white/20 shadow-xl"
-  >
-    <motion.div layout className="w-max h-full p-4">
-      {children}
-    </motion.div>
-  </motion.div>
-</motion.div>
-
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={transition}
+          className="absolute top-[calc(100%+1.2rem)] left-1/2 transform -translate-x-1/2 pt-4"
+        >
+          <motion.div
+            transition={transition}
+            layoutId="active"
+            className="bg-white dark:bg-black backdrop-blur-sm rounded-2xl overflow-hidden border border-black/20 dark:border-white/20 shadow-xl"
+          >
+            <motion.div layout className="w-max h-full p-4">
+              {children}
+            </motion.div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   );
 };
 
-export const Menu = ({
-  setActive,
-  children,
-}: {
+export const Menu = ({ setActive, children }: {
   setActive: (item: string | null) => void;
   children: React.ReactNode;
 }) => {
@@ -71,13 +61,11 @@ export const Menu = ({
     >
       {/* Logo (left side) */}
       <div className="flex items-center space-x-2">
-        <Link href="/">
-          <img
-            src="/logo.jpg" // your logo path
-            alt="Logo"
-            className="w-10 h-10 rounded-full shadow-md cursor-pointer"
-          />
-        </Link>
+        <img
+          src="/logo.jpg"
+          alt="Logo"
+          className="w-10 h-10 rounded-full shadow-md"
+        />
       </div>
 
       {/* Nav items */}
@@ -86,12 +74,7 @@ export const Menu = ({
   );
 };
 
-
-
-export const HoveredLink = ({
-  children,
-  ...rest
-}: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
+export const HoveredLink = ({ children, ...rest }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
   return (
     <a
       {...rest}
@@ -104,6 +87,10 @@ export const HoveredLink = ({
 
 // ---------- Main NavbarMenu Component ----------
 export default function NavbarMenu() {
+  const pathname = usePathname();                  // <<< new
+  // do not show global navbar on dashboard routes
+  if (pathname && pathname.startsWith("/dashboard")) return null;
+
   const [active, setActive] = useState<string | null>(null);
 
   return (
@@ -114,18 +101,17 @@ export default function NavbarMenu() {
         </MenuItem>
 
         <MenuItem setActive={setActive} active={active} item="Dashboard">
-        <ul className="flex flex-col gap-2">
-        <li><HoveredLink href="/dashboard">Analytics</HoveredLink></li>
-        <li><HoveredLink href="/reports">Reports</HoveredLink></li>
-        </ul>
-          
+          <ul className="flex flex-col gap-2">
+            <li><HoveredLink href="/dashboard">Analytics</HoveredLink></li>
+            <li><HoveredLink href="/reports">Reports</HoveredLink></li>
+          </ul>
         </MenuItem>
 
         <MenuItem setActive={setActive} active={active} item="About">
-        <ul className="flex flex-col gap-2">
-        <li><HoveredLink href="/about">Our Mission</HoveredLink></li>
-        <li><HoveredLink href="/team">Team</HoveredLink></li>
-        </ul>
+          <ul className="flex flex-col gap-2">
+            <li><HoveredLink href="/about">Our Mission</HoveredLink></li>
+            <li><HoveredLink href="/team">Team</HoveredLink></li>
+          </ul>
         </MenuItem>
 
         <MenuItem setActive={setActive} active={active} item="Login">
