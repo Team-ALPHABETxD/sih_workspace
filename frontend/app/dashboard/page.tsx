@@ -134,6 +134,4 @@ const Dashboard = () => {
       </div>
     </div>
   );
-};
-
-export default SidebarDemo;
+}
