@@ -90,7 +90,7 @@ export default function Home() {
         </div>
 
         {/* Charts Section */}
-<div className="mt-16 w-full max-w-6xl px-4 space-y-20">
+<div className="mt-16 w-full max-w-6xl px-4 space-y-20 text-slate-700">
   
   {/* Section 1 - Radar Chart (Left) + Paragraph (Right) */}
   <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
