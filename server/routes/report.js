@@ -1,9 +1,11 @@
 const express = require('express')
 const { gLToMgL, findCd, findHei, findSafetyDeg, findPoluDeg, findHmpi, isCriticalToDrink } = require('../middlewares/calculations')
 const { predictFutureTrend, predictHeatmapCoords, analyseWithAI } = require('../middlewares/predictions')
+const Reports = require('../models/Reports')
 
 const router = express.Router()
 
+// new report 
 router.post('/new', async (req, res) => {
     try {
         const {coords, hms, src} = req.body
@@ -22,7 +24,6 @@ router.post('/new', async (req, res) => {
 
             acc_hms.push(mhm)
         }
-
 
         // calculate the separate indices
         const cd = findCd(acc_hms)
@@ -51,6 +52,7 @@ router.post('/new', async (req, res) => {
 
         // generate the report
         const report = {
+            owner: "Owner",
             cd: cd,
             hei: hei,
             hmpi: hmpi,
@@ -62,13 +64,31 @@ router.post('/new', async (req, res) => {
             anal: anal
         }
 
+        // save report
+        const saved_report = await Reports.create(report)
 
-        return res.status(200).json({ flag: "success", report: report}) 
+        return res.status(200).json({ flag: "success", report: saved_report }) 
     } catch (error) {
         console.log(error)
         return res.status(500).json({ flag: "fail", msg: "Server error."})
     }
+})
 
+// fetch report by id
+router.get('/get/:id', async (req, res) => {
+    try {
+        // auth verify
+
+        // find the report
+        const id = req.params.id
+        const target_report = await Reports.findById(id)
+        if(!target_report) return res.status(404).json({ flag: "invalid", msg: "Not found!" })
+
+        return res.status(200).json({ flag: "success", report: target_report })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ flag: "fail", msg: "Server error."})
+    }
 })
 
 module.exports = router
