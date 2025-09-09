@@ -135,3 +135,4 @@ const Dashboard = () => {
     </div>
   );
 }
+export default SidebarDemo;
