@@ -99,18 +99,45 @@ export default function SignupPage() {
     setCurrentStep(0);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (currentStep === 1 && validateStep2()) {
-      console.log("Form submitted:", formData);
-      // Handle form submission here
-      alert("Account created successfully!");
+      try{
+        const submissionData = { 
+          name: formData.name,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          password: formData.password,
+          age: formData.age,
+          gen: formData.gender,
+          occ : formData.occupation
+         };
+
+         const response=await fetch('http://localhost:8000/server/v1/apis/user/signup',{
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify(submissionData)
+         });
+
+         if(response.ok){
+          // Redirect to login page or show success message
+          window.location.href = '/login';
+         }else{
+          const resData=await response.json();
+          setErrors({general: resData.message || 'Signup failed. Please try again.'});
+         }
+        }
+        catch(error){
+         setErrors({general: 'An unexpected error occurred. Please try again later.'});  
+        }
     }
   };
 
   return (
     <div 
-      className="min-h-screen absolute flex items-center justify-center p-4 relative overflow-hidden"
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
       style={{
         backgroundImage: 'url(/backimg1.jpg)',
         backgroundSize: 'cover',
