@@ -1,51 +1,57 @@
 const express = require("express");
-const User = require("../models/user");
+const User = require("../models/Users");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
-const fetchUserDetails = require("../middlewares/fetchUser");
+const fetchUser = require("../middlewares/auth");
 const AUTHENTICATED_SIGNATURE = process.env.AUTH_SIGN;
 
 router.post("/signup", [
     body('name', 'Entre a valid name.').isLength({ min: 3 }),
     body('email', 'Entre a valid email.').isEmail(),
-    body('password', 'Password should be of atleast 5 characters.').isLength({ min: 5 })],
+    body('password', 'Password should be of atleast 5 characters.').isLength({ min: 5 }),
+    body('age', 'Please give a valid age.').isInt({ min: 18, max: 95 })],
     async (req, res) => {
         try {
 
             //checking if any feild has invalid value.
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(400).json({ error: errors.array()[0].msg });
+                return res.status(400).json({ flag: "invalid", msg: errors.array()[0].msg });
             }
 
             // checking if the email already exists.
             let user = await User.findOne({ email: req.body.email });
             if (user) {
-                return res.status(400).json({ error: "User in this email already exists." });
+                return res.status(400).json({ flag:"invalid", msg: "User in this email already exists." });
             }
 
             // creating hash of user's password
             const salt = await bcrypt.genSalt(5);
             const secured_pass = await bcrypt.hash(req.body.password, salt);
 
+            // save user
             user = await User.create({
                 name: req.body.name,
                 password: secured_pass,
-                email: req.body.email
-            });
+                email: req.body.email,
+                occ: req.body.occ,
+                age: req.body.age
+            })
+
+            // create token
             const PAYLOAD = {
                 user: {
                     id: user.id
                 }
             }
+            const token = jwt.sign(PAYLOAD, AUTHENTICATED_SIGNATURE)
 
-            const token = jwt.sign(PAYLOAD, AUTHENTICATED_SIGNATURE);
-            res.json({ token: token });
+            res.status(200).json({ flag: "success", token: token })
         } catch (error) {
             console.log(error)
-            res.status(500).json({ error: "Server not working..." })
+            res.status(500).json({ flag: "fail", msg: "Server is not working..." })
         }
     })
 
@@ -92,7 +98,7 @@ router.post("/login", [
 
 
 router.get("/datafetch",
-    fetchUserDetails,  // middleware to fetching user details
+    fetchUser,  // middleware to fetching user details
     async (req, res) => {
         try {
             const userId = req.user.id;

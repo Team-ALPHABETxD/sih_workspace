@@ -2,7 +2,10 @@ const mongoose = require('mongoose')
 const { Schema, model } = mongoose
 
 const ReportSchema = new Schema({
-    owner: String,
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
     cd: Number,
     hei: Number,
     hmpi: Number,
