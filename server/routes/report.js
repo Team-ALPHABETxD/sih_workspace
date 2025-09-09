@@ -1,28 +1,36 @@
 const express = require('express')
 const { gLToMgL, findCd, findHei, findSafetyDeg, findPoluDeg, findHmpi, isCriticalToDrink } = require('../middlewares/calculations')
 const { predictFutureTrend, predictHeatmapCoords, analyseWithAI } = require('../middlewares/predictions')
+const Reports = require('../models/Reports')
+const fetchUser = require('../middlewares/auth')
+const Users = require('../models/Users')
 
 const router = express.Router()
 
-router.post('/new', async (req, res) => {
+// new report 
+router.post('/new', fetchUser, async (req, res) => {
     try {
-        const {coords, hms, src} = req.body
-        
+        const { coords, hms, src } = req.body
+
+        // owner
+        const userId = req.user.id
+        const owner = await Users.findById(userId)
+        if (!owner) return res.status(400).json({ flag: "invalid", msg: "User not found!" })
+
         // modify the heavy metal values => uniform all to mg/L unit
         let acc_hms = []
-        for( const hm of hms) {
+        for (const hm of hms) {
             let val = hm.val
-            if(hm.unit === "g/L") 
+            if (hm.unit === "g/L")
                 val = gLToMgL(val)
 
             let mhm = {
                 name: hm.name,
-                val : val
+                val: val
             }
 
             acc_hms.push(mhm)
         }
-
 
         // calculate the separate indices
         const cd = findCd(acc_hms)
@@ -43,7 +51,7 @@ router.post('/new', async (req, res) => {
             soil_sus: 4,
             source: src
         }
-        const fut= await predictFutureTrend(sampleForPreds)
+        const fut = await predictFutureTrend(sampleForPreds)
         const hmap = await predictHeatmapCoords(sampleForPreds)
 
         // analysis
@@ -51,6 +59,7 @@ router.post('/new', async (req, res) => {
 
         // generate the report
         const report = {
+            owner: userId,
             cd: cd,
             hei: hei,
             hmpi: hmpi,
@@ -62,13 +71,53 @@ router.post('/new', async (req, res) => {
             anal: anal
         }
 
+        // save report
+        const saved_report = await Reports.create(report)
 
-        return res.status(200).json({ flag: "success", report: report}) 
+        return res.status(200).json({ flag: "success", report: saved_report })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ flag: "fail", msg: "Server error."})
+        return res.status(500).json({ flag: "fail", msg: "Server error." })
     }
+})
 
+// fetch report by id
+router.get('/get/:id', fetchUser, async (req, res) => {
+    try {
+        const userId = req.user.id
+        const user = await Users.findById(userId)
+        if (!user) return res.status(400).json({ flag: "invalid", msg: "User not found!" })
+
+        // find the report
+        const id = req.params.id
+        const target_report = await Reports.findById(id)
+        if (!target_report) return res.status(404).json({ flag: "invalid", msg: "Not found!" })
+
+        // auth verify
+        if (userId.toString() != target_report.owner.toString()) 
+            return res.status(200).json({ flag: "invalid", msg: "Not authenicated"})
+
+        return res.status(200).json({ flag: "success", report: target_report })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ flag: "fail", msg: "Server error." })
+    }
+})
+
+// fetch all reports of an user
+router.get('/getall', fetchUser, async(req, res) => {
+    try {
+        const userId = req.user.id
+        const user = await Users.findById(userId)
+        if (!user) return res.status(400).json({ flag: "invalid", msg: "User not found!" })
+
+        // find all reports
+        const reports = await Reports.find({owner: userId})
+        return res.status(200).json({ flag: "success", reports: reports})
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ flag: "fail", msg: "Server error." })
+    }
 })
 
 module.exports = router

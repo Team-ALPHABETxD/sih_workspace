@@ -15,10 +15,12 @@ export default function ClientLayout({
   const isLoginPage = pathname === "/login";
   const isDashboard = pathname?.startsWith("/dashboard"); // detect dashboard routes
   const isGenerate = pathname?.startsWith("/generate"); // detect generate page
+  const isProfile = pathname === "/profile";
 
   // hide navbar + padding on these routes
-  const showNavbar = !isSignupPage && !isLoginPage && !isDashboard && !isGenerate;
-  const showPadding = !isSignupPage && !isLoginPage && !isDashboard && !isGenerate;
+  const showNavbar = !isSignupPage && !isLoginPage && !isDashboard && !isGenerate && !isProfile;
+  const showPadding = !isSignupPage && !isLoginPage && !isDashboard && !isGenerate && !isProfile;
+
 
   return (
     <>
