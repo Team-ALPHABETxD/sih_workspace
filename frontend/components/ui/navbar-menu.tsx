@@ -14,12 +14,14 @@ const transition: Transition = {
 };
 
 // ... (MenuItem, Menu, HoveredLink components stay exactly as you already have them)
-export const MenuItem = ({ setActive, active, item, children }: {
+interface MenuItemProps {
   setActive: (item: string) => void;
   active: string | null; 
   item: string;
   children?: React.ReactNode;
-}) => {
+}
+
+export const MenuItem = ({ setActive, active, item, children }: MenuItemProps) => {
   return (
     <div onMouseEnter={() => setActive(item)} className="relative">
       <motion.p
@@ -50,10 +52,12 @@ export const MenuItem = ({ setActive, active, item, children }: {
   );
 };
 
-export const Menu = ({ setActive, children }: {
+interface MenuProps {
   setActive: (item: string | null) => void;
   children: React.ReactNode;
-}) => {
+}
+
+export const Menu = ({ setActive, children }: MenuProps) => {
   return (
     <nav
       onMouseLeave={() => setActive(null)}
