@@ -1,36 +1,138 @@
-// app/dashboard/page.tsx
 "use client";
+import React, { useState } from "react";
+import { Sidebar, SidebarBody, SidebarLink } from "../../components/ui/sidebar";
+import {
+  IconArrowLeft,
+  IconBrandTabler,
+  IconSettings,
+  IconUserBolt,
+} from "@tabler/icons-react";
+import { motion } from "motion/react";
+import { cn } from "@/lib/utils";
 
-import Image from "next/image";
-
-export default function DashboardPage() {
+export default function SidebarDemo() {
+  const links = [
+    {
+      label: "Generate Report",
+      href: "#",
+      icon: (
+        <IconBrandTabler className="h-5 w-5 shrink-0 text-neutral-100" />
+      ),
+    },
+    {
+      label: "Recents",
+      href: "#",
+      icon: (
+        <IconUserBolt className="h-5 w-5 shrink-0 text-neutral-200" />
+      ),
+    },
+    {
+      label: "Profile",
+      href: "#",
+      icon: (
+        <IconSettings className="h-5 w-5 shrink-0 text-neutral-200" />
+      ),
+    },
+    {
+      label: "Logout",
+      href: "#",
+      icon: (
+        <IconArrowLeft className="h-5 w-5 shrink-0 text-neutral-200" />
+      ),
+    },
+  ];
+  const [open, setOpen] = useState(false);
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Top-right logo + site name */}
-      <div className="w-full flex justify-end items-center px-6 py-3 bg-gray-50">
-        <div className="flex items-center gap-3">
-          <Image
-            src="/logo.jpg"
-            alt="Metal Craft Logo"
-            width={44}
-            height={44}
-            className="rounded-md"
-          />
-          <span className="text-xl font-bold text-gray-800">Metal Craft</span>
-        </div>
-      </div>
-
-      {/* Dashboard Content */}
-      <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Welcome to Metal Craft Dashboard
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Manage your pollution analysis and insights here.
-          </p>
-        </div>
-      </main>
+    <div
+      className={cn(
+        "flex w-full flex-1 flex-col overflow-hidden bg-neutral-800 md:flex-row",
+        "h-screen", // for your use case, use `h-screen` instead of `h-[60vh]`
+      )}
+    >
+      <Sidebar open={open} setOpen={setOpen}>
+        <SidebarBody className="justify-between gap-10">
+          <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
+            {open ? <Logo /> : <LogoIcon />}
+            <div className="mt-8 flex flex-col gap-2">
+              {links.map((link, idx) => (
+                <SidebarLink key={idx} link={link} />
+              ))}
+            </div>
+          </div>
+          <div>
+            <SidebarLink
+              link={{
+                label: "User",
+                href: "#",
+                icon: (
+                  <img
+                    src="https://via.placeholder.com/50x50/cccccc/000000?text=U"
+                    className="h-7 w-7 shrink-0 rounded-full"
+                    width={50}
+                    height={50}
+                    alt="Avatar"
+                  />
+                ),
+              }}
+            />
+          </div>
+        </SidebarBody>
+      </Sidebar>
+      <Dashboard />
     </div>
   );
 }
+export const Logo = () => {
+  return (
+    <a
+      href="#"
+      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-white"
+    >
+      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-white" />
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="font-medium whitespace-pre text-white"
+      >
+        Metal Craft
+      </motion.span>
+    </a>
+  );
+};
+export const LogoIcon = () => {
+  return (
+    <a
+      href="#"
+      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-white"
+    >
+      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-white" />
+    </a>
+  );
+};
+
+// Dummy dashboard component with content
+const Dashboard = () => {
+  return (
+    <div className="flex flex-1">
+      <div className="flex h-full w-full flex-1 flex-col gap-2 rounded-tl-2xl border border-neutral-700 bg-neutral-900 p-2 md:p-10">
+        <div className="flex gap-2">
+          {[...new Array(4)].map((i, idx) => (
+            <div
+              key={"first-array-demo-1" + idx}
+              className="h-20 w-full animate-pulse rounded-lg bg-neutral-800"
+            ></div>
+          ))}
+        </div>
+        <div className="flex flex-1 gap-2">
+          {[...new Array(2)].map((i, idx) => (
+            <div
+              key={"second-array-demo-1" + idx}
+              className="h-full w-full animate-pulse rounded-lg bg-neutral-800"
+            ></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+// export default SidebarDemo;
