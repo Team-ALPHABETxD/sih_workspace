@@ -33,6 +33,7 @@ def predict_future():
             estimator = model.estimators_[output_idx]
             explainer = shap.TreeExplainer(estimator)
             shap_vals = explainer.shap_values(sample_df)
+            shap_vals = shap_vals + 0.01
             
             shap_dict = {
                 feat: float(round(shap_vals[0,i], 3)) for i, feat in enumerate(sample_df.columns)
