@@ -18,7 +18,7 @@ export default function ClientLayout({
 
    // detect dashboard routes
 
- const showNavbar = !isProfile && !isSignupPage && !isLoginPage && !isDashboard;
+  const showNavbar = !isProfile && !isSignupPage && !isLoginPage && !isDashboard;
   const showPadding = !isProfile && !isSignupPage && !isLoginPage && !isDashboard;
 
   return (
