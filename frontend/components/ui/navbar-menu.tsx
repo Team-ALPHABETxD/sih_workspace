@@ -16,7 +16,7 @@ const transition: Transition = {
 // ... (MenuItem, Menu, HoveredLink components stay exactly as you already have them)
 export const MenuItem = ({ setActive, active, item, children }: {
   setActive: (item: string) => void;
-  active: string | null;
+  active: string | null; 
   item: string;
   children?: React.ReactNode;
 }) => {

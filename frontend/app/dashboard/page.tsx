@@ -14,7 +14,7 @@ export default function SidebarDemo() {
   const links = [
     {
       label: "Generate Report",
-      href: "#",
+      href: "/dashboard",
       icon: (
         <IconBrandTabler className="h-5 w-5 shrink-0 text-neutral-100" />
       ),
@@ -24,13 +24,6 @@ export default function SidebarDemo() {
       href: "#",
       icon: (
         <IconUserBolt className="h-5 w-5 shrink-0 text-neutral-200" />
-      ),
-    },
-    {
-      label: "Profile",
-      href: "#",
-      icon: (
-        <IconSettings className="h-5 w-5 shrink-0 text-neutral-200" />
       ),
     },
     {
@@ -62,16 +55,10 @@ export default function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: "User",
-                href: "#",
+                label: "Profile",
+                href: "/profile",
                 icon: (
-                  <img
-                    src="https://via.placeholder.com/50x50/cccccc/000000?text=U"
-                    className="h-7 w-7 shrink-0 rounded-full"
-                    width={50}
-                    height={50}
-                    alt="Avatar"
-                  />
+                  <IconSettings className="h-7 w-7 shrink-0 text-neutral-200" />
                 ),
               }}
             />

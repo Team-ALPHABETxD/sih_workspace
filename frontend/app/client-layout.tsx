@@ -13,10 +13,13 @@ export default function ClientLayout({
   // special pages
   const isSignupPage = pathname === "/signup";
   const isLoginPage = pathname === "/login";
-  const isDashboard = pathname?.startsWith("/dashboard"); // detect dashboard routes
+  const isDashboard = pathname?.startsWith("/dashboard");
+  const isProfile = pathname === "/profile";
 
-  const showNavbar = !isSignupPage && !isLoginPage && !isDashboard;
-  const showPadding = !isSignupPage && !isLoginPage && !isDashboard;
+   // detect dashboard routes
+
+ const showNavbar = !isProfile && !isSignupPage && !isLoginPage && !isDashboard;
+  const showPadding = !isProfile && !isSignupPage && !isLoginPage && !isDashboard;
 
   return (
     <>
