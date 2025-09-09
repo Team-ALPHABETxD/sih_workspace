@@ -1,125 +1,38 @@
 "use client";
-import React, { useState } from "react";
-import { Sidebar, SidebarBody, SidebarLink } from "../../components/ui/sidebar";
-import {
-  IconArrowLeft,
-  IconBrandTabler,
-  IconSettings,
-  IconUserBolt,
-} from "@tabler/icons-react";
-import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
+import React from "react";
 
-export default function SidebarDemo() {
-  const links = [
-    {
-      label: "Generate Report",
-      href: "/dashboard",
-      icon: (
-        <IconBrandTabler className="h-5 w-5 shrink-0 text-neutral-100" />
-      ),
-    },
-    {
-      label: "Recents",
-      href: "#",
-      icon: (
-        <IconUserBolt className="h-5 w-5 shrink-0 text-neutral-200" />
-      ),
-    },
-    {
-      label: "Logout",
-      href: "#",
-      icon: (
-        <IconArrowLeft className="h-5 w-5 shrink-0 text-neutral-200" />
-      ),
-    },
-  ];
-  const [open, setOpen] = useState(false);
+export default function DashboardPage() {
   return (
-    <div
-      className={cn(
-        "flex w-full flex-1 flex-col overflow-hidden bg-neutral-800 md:flex-row",
-        "h-screen", // for your use case, use `h-screen` instead of `h-[60vh]`
-      )}
-    >
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
-            {open ? <Logo /> : <LogoIcon />}
-            <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
-            </div>
-          </div>
-          <div>
-            <SidebarLink
-              link={{
-                label: "Profile",
-                href: "/profile",
-                icon: (
-                  <IconSettings className="h-7 w-7 shrink-0 text-neutral-200" />
-                ),
-              }}
-            />
-          </div>
-        </SidebarBody>
-      </Sidebar>
-      <Dashboard />
-    </div>
-  );
-}
-export const Logo = () => {
-  return (
-    <a
-      href="#"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-white"
-    >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-white" />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium whitespace-pre text-white"
-      >
-        Metal Craft
-      </motion.span>
-    </a>
-  );
-};
-export const LogoIcon = () => {
-  return (
-    <a
-      href="#"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-white"
-    >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-white" />
-    </a>
-  );
-};
-
-// Dummy dashboard component with content
-const Dashboard = () => {
-  return (
-    <div className="flex flex-1">
-      <div className="flex h-full w-full flex-1 flex-col gap-2 rounded-tl-2xl border border-neutral-700 bg-neutral-900 p-2 md:p-10">
-        <div className="flex gap-2">
-          {[...new Array(4)].map((i, idx) => (
-            <div
-              key={"first-array-demo-1" + idx}
-              className="h-20 w-full animate-pulse rounded-lg bg-neutral-800"
-            ></div>
-          ))}
+    <div className="flex h-full w-full flex-1 flex-col gap-4 p-6 md:p-10 overflow-y-auto bg-gray-50 text-gray-900 rounded-tl-2xl border border-gray-300">
+      <h1 className="text-3xl font-bold mb-4">Dashboard Overview</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="p-6 rounded-lg bg-white border border-gray-300 shadow">
+          <h3 className="text-xl font-semibold mb-2 text-gray-900">Total Reports</h3>
+          <p className="text-2xl text-gray-700">42</p>
         </div>
-        <div className="flex flex-1 gap-2">
-          {[...new Array(2)].map((i, idx) => (
-            <div
-              key={"second-array-demo-1" + idx}
-              className="h-full w-full animate-pulse rounded-lg bg-neutral-800"
-            ></div>
-          ))}
+        <div className="p-6 rounded-lg bg-white border border-gray-300 shadow">
+          <h3 className="text-xl font-semibold mb-2 text-gray-900">Recent Activity</h3>
+          <p className="text-2xl text-gray-700">5</p>
+        </div>
+        <div className="p-6 rounded-lg bg-white border border-gray-300 shadow">
+          <h3 className="text-xl font-semibold mb-2 text-gray-900">Profile Status</h3>
+          <p className="text-2xl text-gray-700">Active</p>
+        </div>
+      </div>
+      <div className="mt-8">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-900">Quick Actions</h2>
+        <div className="flex gap-4">
+          <a href="/dashboard/generate" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            Generate Report
+          </a>
+          <a href="/dashboard/recents" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+            View Recents
+          </a>
+          <a href="/dashboard/profile" className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+            Edit Profile
+          </a>
         </div>
       </div>
     </div>
   );
 }
-// export default SidebarDemo;
