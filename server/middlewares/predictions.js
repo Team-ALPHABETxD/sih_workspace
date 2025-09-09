@@ -86,7 +86,7 @@ const analyseWithAI = async (hms) => {
         
         Predict the following :
         {
-            deseases: [] (Put the probable deaseases with which one might be affected, with one liner description, eg, The High cadmium (Cd) levels in water can cause a range of health problems, most notably kidney damage, osteomalacia and osteoporosis.)
+            deseases: [] (Put the probable deaseases with which one might be affected, with one liner description, (eg, The High cadmium (Cd) levels in water can cause a range of health problems, most notably kidney damage, osteomalacia and osteoporosis.) Only sentences should be in the list not dictionary or anything else)
     
             precautions: [] (Put the precautions one should take before taking the water)
         }

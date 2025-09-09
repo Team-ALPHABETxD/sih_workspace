@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.post('/new', async (req, res) => {
     try {
-        const {coords, hms} = req.body
+        const {coords, hms, src} = req.body
         
         // modify the heavy metal values => uniform all to mg/L unit
         let acc_hms = []
@@ -37,7 +37,11 @@ router.post('/new', async (req, res) => {
             lat: coords.lat,
             lon: coords.lon,
             year: 2025,
-            state: sd
+            state: sd,
+            rain: 44.21,
+            soil_type: 1,
+            soil_sus: 4,
+            source: src
         }
         const fut= await predictFutureTrend(sampleForPreds)
         const hmap = await predictHeatmapCoords(sampleForPreds)
