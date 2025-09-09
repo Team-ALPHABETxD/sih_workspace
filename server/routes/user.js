@@ -37,7 +37,8 @@ router.post("/signup", [
                 password: secured_pass,
                 email: req.body.email,
                 occ: req.body.occ,
-                age: req.body.age
+                age: req.body.age,
+                gen: req.body.gen
             })
 
             // create token
