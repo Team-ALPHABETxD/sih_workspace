@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, Check } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -9,9 +11,25 @@ export default function LoginPage() {
     email: "",
     password: ""
   });
+  const [error, setError] = useState("");
+
+  const { login, isLoading } = useAuth();
+  const router = useRouter();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    if (error) setError("");
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    try {
+      await login(formData.email, formData.password);
+      router.push("/");
+    } catch (error) {
+      setError("Invalid email or password");
+    }
   };
 
 return (
@@ -53,8 +71,15 @@ return (
               <a href="/signup" className="text-blue-600 font-medium hover:underline text-sm">Sign up</a>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="text-red-500 text-sm text-center mb-4">
+                {error}
+              </div>
+            )}
+
             {/* Form */}
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               {/* Email Field */}
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -66,6 +91,7 @@ return (
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Email Address"
+                  required
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                   <Check className="h-5 w-5 text-green-500" />
@@ -83,6 +109,7 @@ return (
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Password"
+                  required
                 />
                 <button
                   type="button"
@@ -100,12 +127,15 @@ return (
               {/* Login Button */}
               <button
                 type="submit"
-                className="w-full bg-blue-800 text-white py-2 px-6 rounded-xl font-medium hover:bg-green-500 transition-colors duration-200 flex items-center justify-center"
+                disabled={isLoading}
+                className="w-full bg-blue-800 text-white py-2 px-6 rounded-xl font-medium hover:bg-green-500 transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Login
-                <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                {isLoading ? "Logging in..." : "Login"}
+                {!isLoading && (
+                  <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                )}
               </button>
 
           
