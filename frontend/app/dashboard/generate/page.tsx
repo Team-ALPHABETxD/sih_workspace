@@ -1,12 +1,18 @@
 "use client";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 // Radix Dropdown Menu
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown } from "lucide-react";
 
 export default function GeneratePage() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     lat: "",
     lon: "",
@@ -33,6 +39,8 @@ export default function GeneratePage() {
     } as Record<string, string>, // default unit is mg/L for all metals
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -44,9 +52,58 @@ export default function GeneratePage() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Report Data:", formData);
+
+    if (!isAuthenticated) {
+      toast.error("Please login to generate a report.");
+      return;
+    }
+
+    setLoading(true);
+
+    // Prepare data
+    const coords = {
+      lat: parseFloat(formData.lat),
+      lon: parseFloat(formData.lon),
+    };
+
+    const hms = Object.keys(metalLabels).map((metal) => ({
+      name: metal,
+      val: parseFloat((formData as any)[metal]),
+      unit: formData.units[metal],
+    }));
+
+    const src = formData.source;
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/server/v1/apis/report/new`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ coords, hms, src }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.flag === "success") {
+        toast.success("Report generated successfully!");
+        // Redirect to the new report page with report data
+        const reportData = encodeURIComponent(JSON.stringify(data.report));
+        router.push(`/dashboard/generate/report?reportData=${reportData}`);
+      } else {
+        toast.error(data.msg || "Failed to generate report.");
+      }
+    } catch (error) {
+      console.error("Error generating report:", error);
+      toast.error("An error occurred while generating the report.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Dropdown Component (with selected unit showing)
@@ -168,12 +225,27 @@ export default function GeneratePage() {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="px-6 py-2 rounded bg-black text-white text-sm font-medium shadow-md hover:bg-gray-800"
+            disabled={loading}
+            className={`px-6 py-2 rounded text-sm font-medium shadow-md ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-black text-white hover:bg-gray-800"
+            }`}
+            onSubmit={handleSubmit}
           >
-            Generate
+            {loading ? (
+              <div className="flex items-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Generating Report...</span>
+              </div>
+            ) : (
+              "Generate"
+            )}
           </button>
         </div>
       </form>
+
+
     </div>
   );
 }
