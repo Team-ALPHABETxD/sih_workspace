@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
 
 type FormErrors = { [key: string]: string };
 
@@ -17,7 +19,10 @@ export default function SignupPage() {
     occupation: "",
   });
 
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  const { signup, isLoading } = useAuth();
+  const router = useRouter();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

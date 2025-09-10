@@ -65,19 +65,19 @@ router.post("/login", [
             //checking if any feild has invalid value.
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(400).json({ error: errors.array()[0].msg });
+                return res.status(400).json({ flag: "invalid", msg: errors.array()[0].msg });
             }
 
             //finding the user
             let user = await User.findOne({ email: req.body.email });
             if (!user) {
-                return res.status(404).json({ error: "Please entre valid credentials." });
+                return res.status(404).json({ flag: "invalid", msg: "Please entre valid credentials." });
             }
 
             //verifing with password
             let verified = await bcrypt.compare(req.body.password, user.password);
             if (!verified) {
-                return res.status(404).json({ error: "Please entre valid credentials." });
+                return res.status(404).json({ flag: "invalid", msg: "Please entre valid credentials." });
             }
 
             const PAYLOAD = {
@@ -88,11 +88,11 @@ router.post("/login", [
 
             const token = jwt.sign(PAYLOAD, AUTHENTICATED_SIGNATURE);
 
-            res.json({ token: token });
+            res.json({flag: "success", token: token });
 
         } catch (error) {
             console.log(error)
-            res.status(500).json({ error: "Server is not working..." })
+            res.status(500).json({ flag: "fail", msg: "Server is not working..." })
         }
 
     })
@@ -104,12 +104,11 @@ router.get("/datafetch",
         try {
             const userId = req.user.id;
             const user = await User.findById(userId).select("-password")
-            res.status(200).json(user)
+            res.status(200).json({ flag:"success", user: user })
         } catch (error) {
-            res.status(500).send({ error: error })
+            res.status(500).json({ flag: "fail", msg: error })
         }
     })
-
 
 
 module.exports = router;

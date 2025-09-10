@@ -1,6 +1,6 @@
 const express = require('express')
 const { gLToMgL, findCd, findHei, findSafetyDeg, findPoluDeg, findHmpi, isCriticalToDrink } = require('../middlewares/calculations')
-const { predictFutureTrend, predictHeatmapCoords, analyseWithAI } = require('../middlewares/predictions')
+const { predictFutureTrend, predictHeatmapCoords, analyseWithAI, predictAsss } = require('../middlewares/predictions')
 const Reports = require('../models/Reports')
 const fetchUser = require('../middlewares/auth')
 const Users = require('../models/Users')
@@ -40,17 +40,21 @@ router.post('/new', fetchUser, async (req, res) => {
         const hmpi = findHmpi(acc_hms)
         const isCritical = isCriticalToDrink(acc_hms)
 
+        // external datas fetching
+        const extFlds = await predictAsss(coords)
+
         // predictions
         const sampleForPreds = {
             lat: coords.lat,
             lon: coords.lon,
             year: 2025,
             state: sd,
-            rain: 44.21,
-            soil_type: 1,
-            soil_sus: 4,
+            rain: extFlds.rain,
+            soil_type: extFlds.st,
+            soil_sus: extFlds.ss,
             source: src
         }
+
         const fut = await predictFutureTrend(sampleForPreds)
         const hmap = await predictHeatmapCoords(sampleForPreds)
 

@@ -75,9 +75,9 @@ export default function LoginPage() {
           >
             {/* Header */}
             <div className="text-center mb-6">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">LOGIN</h1>
               <p className="text-gray-600 text-sm">
-                Just a step away from exploring your Metal Craft dashboard
+                Just a step away from exploring your dashboard
               </p>
             </div>
 
