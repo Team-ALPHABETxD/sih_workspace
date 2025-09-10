@@ -2,6 +2,9 @@
 
 import { usePathname } from "next/navigation";
 import NavbarWrapper from "@/components/NavbarWrapper";
+import { AuthProvider } from "@/lib/auth-context";
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ClientLayout({
   children,
@@ -23,11 +26,12 @@ export default function ClientLayout({
 
 
   return (
-    <>
+    <AuthProvider>
       {/* Navbar hidden on signup, login, dashboard, and generate */}
       {showNavbar && <NavbarWrapper />}
       {/* Remove top padding on signup, login, dashboard, and generate */}
       <main className={showPadding ? "pt-24" : ""}>{children}</main>
-    </>
+      <ToastContainer />
+    </AuthProvider>
   );
 }

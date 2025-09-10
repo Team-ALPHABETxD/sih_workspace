@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -18,6 +20,9 @@ export default function SignupPage() {
   });
 
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  const { signup, isLoading } = useAuth();
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -102,36 +107,22 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (currentStep === 1 && validateStep2()) {
-      try{
-        const submissionData = { 
+      try {
+        const submissionData = {
           name: formData.name,
           email: formData.email,
           phoneNumber: formData.phoneNumber,
           password: formData.password,
           age: formData.age,
           gen: formData.gender,
-          occ : formData.occupation
-         };
+          occ: formData.occupation
+        };
 
-         const response=await fetch('http://localhost:8000/server/v1/apis/user/signup',{
-          method:'POST',
-          headers:{
-            'Content-Type':'application/json'
-          },
-          body:JSON.stringify(submissionData)
-         });
-
-         if(response.ok){
-          // Redirect to login page or show success message
-          window.location.href = '/login';
-         }else{
-          const resData=await response.json();
-          setErrors({general: resData.message || 'Signup failed. Please try again.'});
-         }
-        }
-        catch(error){
-         setErrors({general: 'An unexpected error occurred. Please try again later.'});  
-        }
+        await signup(submissionData);
+        router.push("/login");
+      } catch (error: any) {
+        setErrors({ general: error.message || 'Signup failed. Please try again.' });
+      }
     }
   };
 
@@ -206,7 +197,14 @@ export default function SignupPage() {
                       ? "Create your account to get started"
                       : "Tell us a bit more about yourself"}
                   </p>
-                  
+
+                  {/* General Error Message */}
+                  {errors.general && (
+                    <div className="text-red-500 text-sm mt-2">
+                      {errors.general}
+                    </div>
+                  )}
+
                   {/* Step indicator dots */}
                   <div className="flex justify-center mt-4 mb-2">
                     {[0, 1].map((step) => (
