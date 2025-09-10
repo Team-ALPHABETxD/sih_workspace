@@ -3,21 +3,25 @@ import { useEffect } from "react";
 import { motion, stagger, useAnimate } from "motion/react";
 import { cn } from "@/lib/utils";
 
-export const TextGenerateEffect = ({
-  words,
-  className,
-  filter = true,
-  duration = 0.5,
-  highlightWords = ["Metal Craft", "heavy metal pollution"], // NEW prop
-}: {
+interface TextGenerateEffectProps {
   words: string;
   className?: string;
   filter?: boolean;
   duration?: number;
   highlightWords?: string[];
-}) => {
+}
+
+export const TextGenerateEffect = ({
+  words,
+  className,
+  filter = true,
+  duration = 0.5,
+  highlightWords = ["Metal Craft", "heavy metal pollution"],
+}: TextGenerateEffectProps) => {
   const [scope, animate] = useAnimate();
-  let wordsArray = words.split(" ");
+
+  // ✅ use const instead of let
+  const wordsArray = words.split(" ");
 
   useEffect(() => {
     animate(
@@ -27,17 +31,17 @@ export const TextGenerateEffect = ({
         filter: filter ? "blur(0px)" : "none",
       },
       {
-        duration: duration ? duration : 1,
+        duration: duration ?? 1,
         delay: stagger(0.2),
       }
     );
-  }, [scope.current]);
+    // ✅ Proper dependencies
+  }, [animate, filter, duration, scope]);
 
   const renderWords = () => {
     return (
       <motion.div ref={scope}>
         {wordsArray.map((word, idx) => {
-          // Check if the word should be highlighted
           const isHighlight = highlightWords.some((hw) =>
             hw.split(" ").includes(word)
           );
