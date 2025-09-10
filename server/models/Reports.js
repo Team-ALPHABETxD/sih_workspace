@@ -42,7 +42,11 @@ const ReportSchema = new Schema({
     anal: {
         deseases: [String],
         precautions: [String]
-    }
+    },
+    hmcs: [{
+        name: String,
+        val: Number
+    }]
 })
 
 module.exports = model('Report', ReportSchema)
