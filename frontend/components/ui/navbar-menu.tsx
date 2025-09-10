@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import type { Transition } from "motion/react";
 import React, { useState } from "react";
 import { motion } from "motion/react";
+import Image from "next/image";
 
 const transition: Transition = {
   type: "spring",
@@ -65,11 +66,13 @@ export const Menu = ({ setActive, children }: MenuProps) => {
     >
       {/* Logo (left side) */}
       <div className="flex items-center space-x-2">
-        <img
-          src="/logo.jpg"
-          alt="Logo"
-          className="w-10 h-10 rounded-full shadow-md"
-        />
+        <Image
+  src="/logo.jpg"
+  alt="Logo"
+  width={40}
+  height={40}
+  className="rounded-full shadow-md"
+/>
       </div>
 
       {/* Nav items */}
