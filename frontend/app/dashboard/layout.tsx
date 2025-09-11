@@ -9,6 +9,8 @@ import {
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
 
 const links = [
   {
@@ -54,6 +56,13 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const { logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
 
   return (
     <div
@@ -67,9 +76,32 @@ export default function DashboardLayout({
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             {open ? <Logo /> : <LogoIcon />}
             <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
+              {links.map((link, idx) => {
+                if (link.label === "Logout") {
+                  return (
+                    <button
+                      key={idx}
+                      onClick={handleLogout}
+                      className={cn(
+                        "flex items-center justify-start gap-2 group/sidebar py-2 w-full text-left",
+                        "text-gray-700 hover:text-gray-900 transition-colors"
+                      )}
+                    >
+                      {link.icon}
+                      <motion.span
+                        animate={{
+                          display: open ? "inline-block" : "none",
+                          opacity: open ? 1 : 0,
+                        }}
+                        className="text-gray-700 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+                      >
+                        {link.label}
+                      </motion.span>
+                    </button>
+                  );
+                }
+                return <SidebarLink key={idx} link={link} />;
+              })}
             </div>
           </div>
         </SidebarBody>
