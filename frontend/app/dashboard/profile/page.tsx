@@ -1,22 +1,38 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IconUser } from "@tabler/icons-react";
+import { useAuth } from "@/lib/auth-context";
 
 export default function ProfilePage() {
+  const { user, isLoading } = useAuth();
+
   const [profileData, setProfileData] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    occupation: "Software Engineer",
-    age: "28",
-    gender: "Male"
+    name: "",
+    email: "",
+    occupation: "",
+    age: "",
+    gender: ""
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  console.log("User data:", user);
+
+  useEffect(() => {
+    if (user && user.user) {
+      setProfileData({
+        name: user.user.name || "",
+        email: user.user.email || "",
+        occupation: user.user.occ || "",
+        age: user.user.age?.toString() || "",
+        gender: user.user.gender || ""
+      });
+    }
+  }, [user]);
 
   const handleInputChange = (field: string, value: string) => {
     setProfileData(prev => ({
@@ -32,16 +48,32 @@ export default function ProfilePage() {
   };
 
   const handleCancel = () => {
-    // Reset to original data
-    setProfileData({
-      name: "John Doe",
-      email: "john.doe@example.com",
-      occupation: "Software Engineer",
-      age: "28",
-      gender: "Male"
-    });
+    // Reset to original data from user context
+    if (user && user.user) {
+      setProfileData({
+        name: user.user.name || "",
+        email: user.user.email || "",
+        occupation: user.user.occ || "",
+        age: user.user.age?.toString() || "",
+        gender: user.user.gender || ""
+      });
+    }
     setIsEditing(false);
   };
+
+  
+  if (isLoading) {
+    return (
+      <div className="flex h-full w-full flex-1 flex-col gap-6 p-6 md:p-10 overflow-y-auto bg-gray-50 text-gray-900 rounded-tl-2xl border border-gray-300">
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading profile...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full w-full flex-1 flex-col gap-6 p-6 md:p-10 overflow-y-auto bg-gray-50 text-gray-900 rounded-tl-2xl border border-gray-300">

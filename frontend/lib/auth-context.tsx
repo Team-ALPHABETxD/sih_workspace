@@ -3,12 +3,15 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { toast } from "react-toastify";
 interface User {
-  id: string;
-  name?: string;
-  email?: string;
-  occ?: string;
-  age?: number;
-  gender?: string;
+  flag: string;
+  user: {
+    id: string;
+    name?: string;
+    email?: string;
+    occ?: string;
+    age?: number;
+    gender?: string;
+  };
 }
 
 interface AuthContextType {
