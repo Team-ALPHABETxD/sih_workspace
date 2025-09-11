@@ -107,27 +107,13 @@ export default function SignupPage() {
           phoneNumber: formData.phoneNumber,
           password: formData.password,
           age: formData.age,
-          gender: formData.gender,
-          occupation: formData.occupation,
+          gen: formData.gender,
+          occ: formData.occupation,
         };
 
-        const response = await fetch(
-          "http://localhost:8000/server/v1/apis/user/signup",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(submissionData),
-          }
-        );
 
-        if (response.ok) {
-          window.location.href = "/login";
-        } else {
-          const resData = await response.json();
-          setErrors({
-            general: resData.message || "Signup failed. Please try again.",
-          });
-        }
+        await signup(submissionData);
+        router.push("/login");
       } catch (error) {
         setErrors({
           general: "An unexpected error occurred. Please try again later.",
@@ -387,9 +373,10 @@ export default function SignupPage() {
 
                           <button
                             type="submit"
-                            className="px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition"
+                            disabled={isLoading}
+                            className="px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            Create Account
+                            {isLoading ? "Creating Account..." : "Create Account"}
                           </button>
                         </div>
                       </form>

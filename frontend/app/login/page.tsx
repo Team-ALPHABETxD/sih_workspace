@@ -3,6 +3,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, Check } from "lucide-react";
 import Image from "next/image";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,6 +13,9 @@ export default function LoginPage() {
     password: ""
   });
   const [errors, setErrors] = useState<string | null>(null);
+
+  const { login, isLoading } = useAuth();
+  const router = useRouter();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -26,20 +31,10 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await fetch("http://localhost:8000/server/v1/apis/user/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
-
-      if (res.ok) {
-        window.location.href = "/dashboard"; // redirect after login
-      } else {
-        const data = await res.json();
-        setErrors(data.message || "Login failed. Please try again.");
-      }
-    } catch {
-      setErrors("Something went wrong. Try again later.");
+      await login(formData.email, formData.password);
+      router.push("/dashboard");
+    } catch (error) {
+      setErrors("Login failed. Please try again.");
     }
   };
 
@@ -148,22 +143,25 @@ export default function LoginPage() {
               {/* Login Button */}
               <button
                 type="submit"
-                className="w-full bg-blue-800 text-white py-2 px-6 rounded-xl font-medium hover:bg-green-500 transition-colors duration-200 flex items-center justify-center"
+                disabled={isLoading}
+                className="w-full bg-blue-800 text-white py-2 px-6 rounded-xl font-medium hover:bg-green-500 transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Login
-                <svg
-                  className="ml-2 h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+                {isLoading ? "Logging in..." : "Login"}
+                {!isLoading && (
+                  <svg
+                    className="ml-2 h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                )}
               </button>
             </form>
           </motion.div>

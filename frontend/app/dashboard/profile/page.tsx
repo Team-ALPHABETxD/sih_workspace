@@ -23,7 +23,7 @@ export default function ProfilePage() {
   console.log("User data:", user);
 
   useEffect(() => {
-    if (user && user.user) {
+    if (user ) {
       setProfileData({
         name: user.user.name || "",
         email: user.user.email || "",
