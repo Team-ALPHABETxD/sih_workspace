@@ -67,7 +67,7 @@ export const Menu = ({ setActive, children }: MenuProps) => {
       {/* Logo (left side) */}
       <div className="flex items-center space-x-2">
         <Image
-  src="/logo.jpg"
+  src="/logo2.jpg"
   alt="Logo"
   width={40}
   height={40}
@@ -109,8 +109,9 @@ export default function NavbarMenu() {
 
         <MenuItem setActive={setActive} active={active} item="Dashboard">
           <ul className="flex flex-col gap-2">
-            <li><HoveredLink href="/dashboard">Analytics</HoveredLink></li>
-            <li><HoveredLink href="/reports">Reports</HoveredLink></li>
+            <li><HoveredLink href="/dashboard">Dashboard</HoveredLink></li>
+            <li><HoveredLink href="/dashboard/generate">Analytics</HoveredLink></li>
+            <li><HoveredLink href="/dashboard/generate/report">Reports</HoveredLink></li>
           </ul>
         </MenuItem>
 
@@ -121,8 +122,11 @@ export default function NavbarMenu() {
           </ul>
         </MenuItem>
 
-        <MenuItem setActive={setActive} active={active} item="Login">
-          <HoveredLink href="/login">Sign In</HoveredLink>
+        <MenuItem setActive={setActive} active={active} item="Register">
+        <ul className="flex flex-col gap-2">
+          <li><HoveredLink href="/signup">Sign Up</HoveredLink></li>
+          <li><HoveredLink href="/login">Log In</HoveredLink></li>
+        </ul>
         </MenuItem>
       </Menu>
     </div>

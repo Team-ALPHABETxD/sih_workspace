@@ -3,7 +3,7 @@ import "./globals.css";
 import ClientLayout from "./client-layout";
 
 export const metadata: Metadata = {
-  title: "Metal Craft",
+  title: "Aqua Vision",
   description: "Heavy Metal Pollution Indices",
 };
 
