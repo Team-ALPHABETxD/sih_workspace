@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 
+import Link from "next/link"
+
+
 import { HighlightText } from "@/components/ui/shadcn-io/highlight-text";
 import { ShimmeringText } from "@/components/ui/shadcn-io/shimmering-text";
 import { WritingText } from "@/components/ui/shadcn-io/writing-text";
@@ -63,9 +66,11 @@ export default function Home() {
         </p>
 
         {/* Button */}
+        <Link href="/signup">
         <button className="mt-20 px-6 py-2 bg-black text-white rounded-lg font-bold transform hover:-translate-y-1 transition duration-400">
           Explore Now →
         </button>
+        </Link>
 
         {/* Info Card */}
         <div className="mt-32">
@@ -229,10 +234,12 @@ export default function Home() {
 
         {/* "Get Started!" Button Section */}
         <div className="mt-20 flex justify-center">
-          <button className="px-6 py-3 rounded-md border-2 border-black bg-white text-black text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] transition duration-200 font-bold">
-            Get Started Now!
-          </button>
-        </div>
+  <Link href="/signup">
+    <button className="px-6 py-3 rounded-md border-2 border-black bg-white text-black text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] transition duration-200 font-bold">
+      Get Started Now!
+    </button>
+  </Link>
+</div>
 
         {/* Container Text Flip Section */}
         <div className="mt-16 flex justify-center">
