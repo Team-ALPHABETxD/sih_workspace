@@ -6,6 +6,7 @@ import {
   IconBrandTabler,
   IconSettings,
   IconUserBolt,
+  IconClock,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -31,7 +32,7 @@ const links = [
     label: "Recents",
     href: "/dashboard/recents",
     icon: (
-      <IconUserBolt className="h-5 w-5 shrink-0 text-gray-700" />
+      <IconClock className="h-5 w-5 shrink-0 text-gray-700" />
     ),
   },
   {
