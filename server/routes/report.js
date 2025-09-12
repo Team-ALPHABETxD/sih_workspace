@@ -125,6 +125,22 @@ router.get('/getall', fetchUser, async(req, res) => {
     }
 })
 
+// get count of reports for the user
+router.get('/count', fetchUser, async(req, res) => {
+    try {
+        const userId = req.user.id
+        const user = await Users.findById(userId)
+        if (!user) return res.status(400).json({ flag: "invalid", msg: "User not found!" })
+
+        // count reports
+        const count = await Reports.countDocuments({owner: userId})
+        return res.status(200).json({ flag: "success", count: count})
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ flag: "fail", msg: "Server error." })
+    }
+})
+
 
 
 router.post('/chat/:id', fetchUser, async(req, res) => {

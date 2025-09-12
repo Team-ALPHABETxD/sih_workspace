@@ -1,18 +1,46 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../lib/auth-context";
 
 export default function DashboardPage() {
+  const { isAuthenticated } = useAuth();
+  const [totalReports, setTotalReports] = useState(0);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const fetchTotalReports = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/server/v1/apis/report/count`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.flag === "success") {
+              setTotalReports(data.count);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching total reports:", error);
+        }
+      };
+      fetchTotalReports();
+    }
+  }, [isAuthenticated]);
+
   return (
     <div className="flex h-full w-full flex-1 flex-col gap-4 p-6 md:p-10 overflow-y-auto bg-gray-50 text-gray-900 rounded-tl-2xl border border-gray-300">
       <h1 className="text-3xl font-bold mb-4">Dashboard Overview</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="p-6 rounded-lg bg-white border border-gray-300 shadow">
           <h3 className="text-xl font-semibold mb-2 text-gray-900">Total Reports</h3>
-          <p className="text-2xl text-gray-700">42</p>
+          <p className="text-2xl text-gray-700">{totalReports}</p>
         </div>
         <div className="p-6 rounded-lg bg-white border border-gray-300 shadow">
           <h3 className="text-xl font-semibold mb-2 text-gray-900">Recent Activity</h3>
-          <p className="text-2xl text-gray-700">5</p>
+          <p className="text-2xl text-gray-700">{totalReports}</p>
         </div>
         <div className="p-6 rounded-lg bg-white border border-gray-300 shadow">
           <h3 className="text-xl font-semibold mb-2 text-gray-900">Profile Status</h3>

@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Heatmap from "../../generate/report/_components/Heatmap";
+import { HeavyMetalTrends } from "../../generate/report/_components/HeavyMetalTrends";
+import { ChartBarLabel } from "../../generate/report/_components/ChartBarLabel";
 
 import {
   Card,
@@ -235,51 +238,8 @@ const ReportDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* NEW: Graph */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Heavy Metal Trends</CardTitle>
-              <CardDescription>Concentration levels (mg/L)</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig}>
-                <LineChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{ left: 12, right: 12 }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                  />
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent hideLabel />}
-                  />
-                  <Line
-                    dataKey="value"
-                    type="linear"
-                    stroke="var(--color-value)"
-                    strokeWidth={2}
-                    dot={true}
-                  />
-                </LineChart>
-              </ChartContainer>
-            </CardContent>
-            <CardFooter className="flex-col items-start gap-2 text-sm">
-              <div className="flex gap-2 leading-none font-medium">
-                Auto-generated from report data{" "}
-                <TrendingUp className="h-4 w-4" />
-              </div>
-              <div className="text-muted-foreground leading-none">
-                Showing heavy metal concentration values
-              </div>
-            </CardFooter>
-          </Card>
 
+          
           {/* Contamination Index */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200">
@@ -308,7 +268,74 @@ const ReportDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* rest of your code unchanged ... */}
+          {/* Degree Analysis */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Safety Degree (SD)</h3>
+              <p className="text-xl font-medium text-gray-700">{report.sd.toFixed(2)}</p>
+            </div>
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Pollution Degree (PD)</h3>
+              <p className="text-xl font-medium text-gray-700">{report.pd.toFixed(2)}</p>
+            </div>
+          </div>
+          
+          {/* NEW: Graph */}
+          <HeavyMetalTrends chartData={chartData} chartConfig={chartConfig} />
+
+          {/* Added ChartBarLabel component */}
+          <div className="mt-8">
+            <ChartBarLabel />
+          </div>
+
+          {/* Detailed Analysis */}
+          <div className="space-y-6">
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Heatmap</h3>
+              {report.hmap ? (
+                <Heatmap hmap={report.hmap} />
+              ) : (
+                <p>No heatmap data available</p>
+              )}
+            </div>
+
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
+                <ShieldCheck className="h-5 w-5 text-blue-600" />
+                <span>AI Analysis</span>
+              </h3>
+              {report.anal && (
+                <>
+                  {report.anal.deseases && (
+                    <div className="mb-4">
+                      <h4 className="text-md font-semibold text-gray-800 mb-2 flex items-center space-x-1">
+                        <AlertCircle className="h-4 w-4 text-red-500" />
+                        <span>Diseases</span>
+                      </h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700">
+                        {report.anal.deseases.map((disease: string, index: number) => (
+                          <li key={index}>{disease}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {report.anal.precautions && (
+                    <div>
+                      <h4 className="text-md font-semibold text-gray-800 mb-2 flex items-center space-x-1">
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                        <span>Precautions</span>
+                      </h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700">
+                        {report.anal.precautions.map((precaution: string, index: number) => (
+                          <li key={index}>{precaution}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
