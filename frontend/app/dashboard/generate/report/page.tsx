@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "react-toastify";
 import { CheckCircle, AlertTriangle, AlertCircle, ShieldCheck } from "lucide-react";
+import Heatmap from "./_components/Heatmap";
 
 interface Report {
   cd: number;
@@ -118,11 +119,14 @@ const GeneratedReportPage: React.FC = () => {
             </div>
 
             <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Heatmap Data</h3>
-              <pre className="bg-white p-4 rounded text-sm overflow-x-auto border">
-                {JSON.stringify(report.hmap, null, 2)}
-              </pre>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Heatmap</h3>
+              {report.hmap ? (
+                <Heatmap hmap={report.hmap} />
+              ) : (
+                <p>No heatmap data available</p>
+              )}
             </div>
+
 
             <div className="bg-gray-50 p-6 rounded-lg">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">

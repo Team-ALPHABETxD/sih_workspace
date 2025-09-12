@@ -74,7 +74,7 @@ export default function GeneratePage() {
       unit: formData.units[metal],
     }));
 
-    const src = formData.source;
+    const src = 0;
 
     const token = localStorage.getItem("token");
 
