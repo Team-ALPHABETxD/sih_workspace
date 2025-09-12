@@ -3,13 +3,26 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "react-toastify";
-import {
-  CheckCircle,
-  AlertTriangle,
-  AlertCircle,
-  ShieldCheck,
-} from "lucide-react";
+import { CheckCircle, AlertTriangle, AlertCircle, ShieldCheck, TrendingUp } from "lucide-react";
 import Heatmap from "./_components/Heatmap";
+import { ChartBarLabel } from "./_components/ChartBarLabel";
+import { HeavyMetalTrends } from "./_components/HeavyMetalTrends";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 interface Report {
   cd: number;
@@ -21,6 +34,10 @@ interface Report {
   fut: any;
   hmap: any;
   anal: any;
+  hmcs: Array<{
+    name: string;
+    val: number;
+  }>;
 }
 
 const GeneratedReportPage: React.FC = () => {
@@ -77,6 +94,19 @@ const GeneratedReportPage: React.FC = () => {
       </div>
     );
   }
+
+  // Convert backend hmcs into chart data
+  const chartData = report.hmcs.map((hmc) => ({
+    name: hmc.name,
+    value: hmc.val,
+  }));
+
+  const chartConfig: ChartConfig = {
+    value: {
+      label: "Concentration (mg/L)",
+      color: "var(--chart-1)",
+    },
+  };
 
   return (
     <div className="flex h-full w-full flex-1 flex-col gap-4 p-6 md:p-10 overflow-y-auto bg-gray-50 text-gray-900">
@@ -151,7 +181,26 @@ const GeneratedReportPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Detailed Analysis */}
+          {/* NEW: Graph */}
+          <HeavyMetalTrends chartData={chartData} chartConfig={chartConfig} />
+
+          {/* Added ChartBarLabel component */}
+          <div className="mt-8">
+            <ChartBarLabel />
+          </div>
+
+         
+
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Heatmap</h3>
+              {report.hmap ? (
+                <Heatmap hmap={report.hmap} />
+              ) : (
+                <p>No heatmap data available</p>
+              )}
+            </div>
+
+               {/* Detailed Analysis */}
           <div className="space-y-6">
             <div className="bg-gray-50 p-6 rounded-lg">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
