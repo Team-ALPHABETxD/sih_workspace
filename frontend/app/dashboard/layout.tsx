@@ -127,7 +127,7 @@ export const Logo = () => {
         animate={{ opacity: 1 }}
         className="font-medium whitespace-pre text-gray-700"
       >
-        Metal Craft
+        Aqua Vision
       </motion.span>
     </a>
   );

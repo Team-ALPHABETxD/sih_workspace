@@ -23,6 +23,8 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { FutureTrends } from "./_components/futureTrends";
+import { ShapBarChart } from "./_components/ShapBarCharts";
 
 interface Report {
   cd: number;
@@ -119,9 +121,8 @@ const GeneratedReportPage: React.FC = () => {
           {/* Header */}
           <div className="flex items-center justify-center space-x-4">
             <div
-              className={`p-3 rounded-full ${
-                report.isCritical ? "bg-red-100" : "bg-green-100"
-              }`}
+              className={`p-3 rounded-full ${report.isCritical ? "bg-red-100" : "bg-green-100"
+                }`}
             >
               {report.isCritical ? (
                 <AlertTriangle className="h-8 w-8 text-red-600" />
@@ -185,30 +186,23 @@ const GeneratedReportPage: React.FC = () => {
           <HeavyMetalTrends chartData={chartData} chartConfig={chartConfig} />
 
           {/* Added ChartBarLabel component */}
-          <div className="mt-8">
-            <ChartBarLabel />
-          </div>
-
-         
-
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Heatmap</h3>
-              {report.hmap ? (
-                <Heatmap hmap={report.hmap} />
-              ) : (
-                <p>No heatmap data available</p>
-              )}
-            </div>
-
-               {/* Detailed Analysis */}
+          {/* Detailed Analysis */}
           <div className="space-y-6">
             <div className="bg-gray-50 p-6 rounded-lg">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Future Predictions
               </h3>
-              <pre className="bg-white p-4 rounded text-sm overflow-x-auto border">
-                {JSON.stringify(report.fut, null, 2)}
-              </pre>
+              {report.fut?.prediction && (
+                <div className="mt-6">
+                  < FutureTrends predictions={report.fut.prediction} />
+                </div>
+              )}
+              {report.fut?.shap && (
+                <div className="mt-6">
+                  <ShapBarChart shapData={report.fut.shap} />
+                </div>
+              )}
+
             </div>
 
             <div className="bg-gray-50 p-6 rounded-lg">
