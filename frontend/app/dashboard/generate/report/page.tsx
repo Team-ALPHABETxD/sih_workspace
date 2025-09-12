@@ -1,9 +1,14 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "react-toastify";
-import { CheckCircle, AlertTriangle, AlertCircle, ShieldCheck, TrendingUp } from "lucide-react";
+import {
+  CheckCircle,
+  AlertTriangle,
+  AlertCircle,
+  ShieldCheck,
+} from "lucide-react";
 import Heatmap from "./_components/Heatmap";
 import { ChartBarLabel } from "./_components/ChartBarLabel";
 import { HeavyMetalTrends } from "./_components/HeavyMetalTrends";
@@ -24,12 +29,15 @@ import {
 } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
+import { RiChat3Line, RiCloseLine } from "react-icons/ri";
+
 interface Report {
+  _id?: string;
   cd: number;
   hei: number;
   hmpi: number;
-  sd: string;
-  pd: string;
+  sd: string | number;
+  pd: string | number;
   isCritical: boolean;
   fut: any;
   hmap: any;
@@ -43,8 +51,17 @@ interface Report {
 const GeneratedReportPage: React.FC = () => {
   const searchParams = useSearchParams();
   const reportData = searchParams.get("reportData");
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token: authTokenFromContext } = useAuth() as any;
   const [report, setReport] = useState<Report | null>(null);
+
+  // Chat widget state
+  const [chatOpen, setChatOpen] = useState(false);
+  const [messages, setMessages] = useState<
+    Array<{ id: string; from: "bot" | "user"; text: string }>
+  >([]);
+  const [inputValue, setInputValue] = useState("");
+  const [sending, setSending] = useState(false);
+  const messagesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -84,6 +101,13 @@ const GeneratedReportPage: React.FC = () => {
     }
   }, [reportData, isAuthenticated]);
 
+  // Scroll chat to bottom on new message
+  useEffect(() => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [messages, chatOpen]);
+
   if (!report) {
     return (
       <div className="flex justify-center items-center h-full">
@@ -106,6 +130,92 @@ const GeneratedReportPage: React.FC = () => {
       label: "Concentration (mg/L)",
       color: "var(--chart-1)",
     },
+  };
+
+  // Determine report id (try common fields)
+  const reportId = (report && ((report as any)._id || (report as any).id)) || null;
+
+  /**
+   * Send a message to backend chat route.
+   * - Tries to use credentials: "include" (cookie-based) and also Authorization header if token is available.
+   * - Expects backend response { flag: "success", rep: <string> }
+   *
+   * NOTE: set NEXT_PUBLIC_API_BASE_URL in your .env (see instructions below).
+   */
+  const sendMessageToBackend = async (text: string) => {
+    if (!reportId) {
+      toast.error("Report id not found — cannot chat.");
+      return;
+    }
+
+    setSending(true);
+
+    // Optimistically show user's message
+    const userMsgId = `${Date.now()}-u`;
+    setMessages((m) => [...m, { id: userMsgId, from: "user", text }]);
+    setInputValue("");
+
+    try {
+      // get API base from env (NEXT_PUBLIC_ so it is available client-side)
+      // Fallback: use same origin + /api if env var isn't set
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_BASE_URL ||
+        `${window.location.origin}/api`; // adjust according to how your server is mounted
+
+      // Build headers; include Authorization if token found (from useAuth or localStorage)
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      const token =
+        (authTokenFromContext as string) ||
+        (typeof window !== "undefined" ? localStorage.getItem("token") || localStorage.getItem("authToken") || localStorage.getItem("mm_token") : null);
+
+      if (token) {
+        // If your backend uses a different header name (eg "x-auth-token"), replace "Authorization" below.
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const res = await fetch(`${API_BASE}/report/chat/${reportId}`, {
+        method: "POST",
+        headers,
+        credentials: "include", // include cookies if auth middleware expects cookies
+        body: JSON.stringify({ q: text }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.flag !== "success") {
+        console.error("Chat API error:", data);
+        const msg = data?.msg || data?.error || "Failed to get reply from bot.";
+        setMessages((m) => [
+          ...m,
+          { id: `${Date.now()}-err`, from: "bot", text: `Error: ${msg}` },
+        ]);
+        toast.error("Chat error: " + msg);
+      } else {
+        // data.rep may be string or array. Normalize to string.
+        const botReply =
+          typeof data.rep === "string" ? data.rep : JSON.stringify(data.rep);
+        setMessages((m) => [...m, { id: `${Date.now()}-b`, from: "bot", text: botReply }]);
+      }
+    } catch (err) {
+      console.error("Chat request failed:", err);
+      setMessages((m) => [
+        ...m,
+        { id: `${Date.now()}-err2`, from: "bot", text: "Server error while chatting." },
+      ]);
+      toast.error("Server error while chatting.");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleSend = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    const trimmed = inputValue.trim();
+    if (!trimmed) return;
+    await sendMessageToBackend(trimmed);
   };
 
   return (
@@ -189,18 +299,16 @@ const GeneratedReportPage: React.FC = () => {
             <ChartBarLabel />
           </div>
 
-         
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Heatmap</h3>
+            {report.hmap ? (
+              <Heatmap hmap={report.hmap} />
+            ) : (
+              <p>No heatmap data available</p>
+            )}
+          </div>
 
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Heatmap</h3>
-              {report.hmap ? (
-                <Heatmap hmap={report.hmap} />
-              ) : (
-                <p>No heatmap data available</p>
-              )}
-            </div>
-
-               {/* Detailed Analysis */}
+          {/* Detailed Analysis */}
           <div className="space-y-6">
             <div className="bg-gray-50 p-6 rounded-lg">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -280,6 +388,121 @@ const GeneratedReportPage: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* ----------------------
+          Chatbot Floating Button
+          ---------------------- */}
+      <div>
+        {/* Circular floating button */}
+        {!chatOpen && (
+          <button
+            aria-label="Open report chat"
+            onClick={() => {
+              // initialize messages with a welcome from Aevi (optional)
+              setMessages([
+                {
+                  id: `welcome-${Date.now()}`,
+                  from: "bot",
+                  text: `Hi — I'm Aevi. I can answer questions about this report. Ask me anything.`,
+                },
+              ]);
+              setChatOpen(true);
+            }}
+            className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full bg-blue-600 text-white shadow-xl hover:scale-105 transition-transform"
+          >
+            <RiChat3Line className="w-6 h-6" />
+          </button>
+        )}
+
+        {/* Chat popup card */}
+        {chatOpen && (
+          <div className="fixed bottom-20 right-6 z-50 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b">
+              <div className="flex items-center space-x-3">
+                <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold">
+                  A
+                </div>
+                <div>
+                  <div className="text-sm font-semibold">Aevi</div>
+                  <div className="text-xs text-gray-500">Report assistant</div>
+                </div>
+              </div>
+              <button
+                aria-label="Close chat"
+                onClick={() => setChatOpen(false)}
+                className="p-1 rounded hover:bg-gray-100"
+              >
+                <RiCloseLine className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Messages (scrollable) */}
+            <div
+              ref={messagesRef}
+              className="px-3 py-3 flex-1 overflow-y-auto space-y-3 max-h-64"
+            >
+              {messages.length === 0 && (
+                <div className="text-center text-sm text-gray-500">
+                  Start the conversation
+                </div>
+              )}
+
+              {messages.map((m) =>
+                m.from === "bot" ? (
+                  <div key={m.id} className="flex items-start space-x-3">
+                    <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm text-gray-700">
+                      A
+                    </div>
+                    <div className="max-w-[80%]">
+                      <div className="text-xs text-gray-500 mb-1">Aevi</div>
+                      <div className="bg-gray-200 text-gray-900 p-2 rounded-lg whitespace-pre-wrap">
+                        {m.text}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div key={m.id} className="flex items-start justify-end">
+                    <div className="max-w-[80%]">
+                      <div className="text-right mb-1 text-xs text-gray-500">You</div>
+                      <div className="bg-black text-white p-2 rounded-lg whitespace-pre-wrap">
+                        {m.text}
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
+
+            {/* Input */}
+            <form
+              onSubmit={handleSend}
+              className="px-3 py-3 border-t flex items-center gap-2"
+            >
+              <input
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Ask Aevi about this report..."
+                className="flex-1 px-3 py-2 rounded-lg border focus:outline-none"
+                disabled={sending}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+              />
+              <button
+                type="submit"
+                disabled={sending}
+                className="px-3 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-50"
+              >
+                {sending ? "..." : "Send"}
+              </button>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );
