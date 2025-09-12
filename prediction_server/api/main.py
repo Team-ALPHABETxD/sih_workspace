@@ -3,8 +3,11 @@ import pandas as pd
 import numpy as np
 import joblib
 import shap
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/predict/futureTrends', methods=['POST'])
 def predict_future():
