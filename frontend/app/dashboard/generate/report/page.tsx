@@ -134,16 +134,7 @@ const GeneratedReportPage: React.FC = () => {
     },
   };
 
-  // Determine report id (try common fields)
   const reportId = (report && ((report as any)._id || (report as any).id)) || null;
-
-  /**
-   * Send a message to backend chat route.
-   * - Tries to use credentials: "include" (cookie-based) and also Authorization header if token is available.
-   * - Expects backend response { flag: "success", rep: <string> }
-   *
-   * NOTE: set NEXT_PUBLIC_API_BASE_URL in your .env (see instructions below).
-   */
   const sendMessageToBackend = async (text: string) => {
     if (!reportId) {
       toast.error("Report id not found — cannot chat.");
@@ -161,8 +152,7 @@ const GeneratedReportPage: React.FC = () => {
       // get API base from env (NEXT_PUBLIC_ so it is available client-side)
       // Fallback: use same origin + /api if env var isn't set
       const API_BASE =
-        process.env.NEXT_PUBLIC_API_BASE_URL ||
-        `${window.location.origin}/api`; // adjust according to how your server is mounted
+        process.env.NEXT_PUBLIC_BASE_URL
 
       // Build headers; include Authorization if token found (from useAuth or localStorage)
       const headers: Record<string, string> = {
@@ -178,7 +168,7 @@ const GeneratedReportPage: React.FC = () => {
         headers["Authorization"] = `Bearer ${token}`;
       }
 
-      const res = await fetch(`${API_BASE}/report/chat/${reportId}`, {
+      const res = await fetch(`${API_BASE}/server/v1/apis/report/chat/${reportId}`, {
         method: "POST",
         headers,
         body: JSON.stringify({ q: text }),
