@@ -234,33 +234,56 @@ const GeneratedReportPage: React.FC = () => {
                 {report.isCritical ? "Unsafe to Drink" : "Safe to Drink"}
               </h2>
               <p className="text-gray-600">
-                Based on heavy metal concentration analysis
+                Based on heavy metal concentration analysis (HMPI Index)
               </p>
             </div>
           </div>
 
           {/* Contamination Index */}
+          {/* Contamination Index */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Cd */}
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200">
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">
-                Cd Index
-              </h3>
+              <h3 className="text-lg font-semibold text-blue-900 mb-2">Cd Index</h3>
               <p className="text-3xl font-bold text-blue-600">
                 {report.cd.toFixed(2)}
               </p>
+              <p className="text-sm text-gray-700 mt-2">
+                <span className="font-medium">Contamination Degree (Cd):</span>
+                Measures how much heavy metal concentrations exceed their permissible
+                limits.
+                <br></br>
+                Formula: <code>Σ (Ci / Si – 1)</code>, where <code>Ci</code> = concentration of metal i,
+                <code>Si</code> = permissible standard.
+              </p>
             </div>
+
+            {/* HEI */}
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200">
               <h3 className="text-lg font-semibold text-purple-900 mb-2">HEI</h3>
               <p className="text-3xl font-bold text-purple-600">
                 {report.hei.toFixed(2)}
               </p>
+              <p className="text-sm text-gray-700 mt-2">
+                <span className="font-medium">Heavy Metal Evaluation Index (HEI):</span>
+                Indicates the overall degree of heavy metal pollution.
+                <br></br>
+                Formula: <code>Σ (Ci / Si)</code>.
+              </p>
             </div>
+
+            {/* HMPI */}
             <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border border-green-200">
-              <h3 className="text-lg font-semibold text-green-900 mb-2">
-                HMPI
-              </h3>
+              <h3 className="text-lg font-semibold text-green-900 mb-2">HMPI</h3>
               <p className="text-3xl font-bold text-green-600">
                 {report.hmpi.toFixed(2)}
+              </p>
+              <p className="text-sm text-gray-700 mt-2">
+                <span className="font-medium">Heavy Metal Pollution Index (HMPI):</span>
+                Weighted index that accounts for concentration and permissible limits.
+                <br></br>
+                Formula: <code>Σ (Wi × Qi) / Σ Wi</code>,
+                where <code>Qi = (Ci / Si) × 100</code>, <code>Wi = 1 / Si</code>.
               </p>
             </div>
           </div>
@@ -269,14 +292,21 @@ const GeneratedReportPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-gray-50 p-6 rounded-lg">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Safety Degree (SD)
+                Serverity Degree (SD)
+
               </h3>
+              <p className="text-gray-600">
+                Based on CD Index
+              </p>
               <p className="text-xl font-medium text-gray-700">{report.sd}</p>
             </div>
             <div className="bg-gray-50 p-6 rounded-lg">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Pollution Degree (PD)
               </h3>
+              <p className="text-gray-600">
+                Based on HEI Index
+              </p>
               <p className="text-xl font-medium text-gray-700">{report.pd}</p>
             </div>
           </div>
