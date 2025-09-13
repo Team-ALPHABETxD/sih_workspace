@@ -281,7 +281,6 @@ const GeneratedReportPage: React.FC = () => {
               <p className="text-sm text-gray-700 mt-2">
                 <span className="font-medium">Heavy Metal Pollution Index (HMPI):</span>
                 Weighted index that accounts for concentration and permissible limits.
-                <br></br>
                 Formula: <code>Σ (Wi × Qi) / Σ Wi</code>,
                 where <code>Qi = (Ci / Si) × 100</code>, <code>Wi = 1 / Si</code>.
               </p>
