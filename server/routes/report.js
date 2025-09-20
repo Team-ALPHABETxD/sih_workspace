@@ -13,7 +13,8 @@ const {
   predictHeatmapCoords,
   analyseWithAI,
   predictAsss,
-  getAiReplies
+  getAiReplies,
+  predictAnomalyRegs
 } = require('../middlewares/predictions')
 const Reports = require('../models/Reports')
 const fetchUser = require('../middlewares/auth')
@@ -45,6 +46,17 @@ router.post('/new', fetchUser, async (req, res) => {
 
       acc_hms.push(mhm)
     }
+
+    // validation & anomaly regression analysis
+    let hms_data = hms.reduce((acc, hm) => {
+      acc[hm.name] = hm.val;
+      return acc;
+    }, {});
+    const fl = await predictAnomalyRegs(hms_data)
+
+    // reject insane input
+    if(fl['anoms']['decision'] === 'reject')
+      res.status(404).json({flag: fl['anoms']['decision'], msg: fl['anoms']['reasons'][0]})
 
     // calculate the separate indices
     const cd = findCd(acc_hms)
@@ -87,13 +99,13 @@ router.post('/new', fetchUser, async (req, res) => {
       fut: fut,
       hmap: hmap,
       anal: anal,
-      hmcs: acc_hms
+      hmcs: acc_hms,
     }
 
     // save report
     const saved_report = await Reports.create(report)
 
-    return res.status(200).json({ flag: "success", report: saved_report })
+    return res.status(200).json({ flag: "success", report: saved_report, fl})
   } catch (error) {
     console.log(error)
     return res.status(500).json({ flag: "fail", msg: "Server error." })
