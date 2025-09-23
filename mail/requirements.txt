@@ -1,0 +1,5 @@
+seaborn
+reportlab
+flask
+flask-cors
+numpy

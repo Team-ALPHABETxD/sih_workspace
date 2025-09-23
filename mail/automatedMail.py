@@ -37,7 +37,7 @@ def send_email(receiver_email, pdf_filename):
         server.send_message(msg)
 
 #API
-@app.route("", methods=["POST"])
+@app.route("/automail", methods=["POST"])
 def generate_report():
     try:
         data = request.json
@@ -118,4 +118,4 @@ def generate_report():
         return jsonify({"status": "error", "message": str(e)})
 
 if __name__ == "__main__":
-    app.run(host="", port=)
+    app.run(debug=True)
