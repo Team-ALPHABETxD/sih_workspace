@@ -52,11 +52,11 @@ router.post('/new', fetchUser, async (req, res) => {
       acc[hm.name] = hm.val;
       return acc;
     }, {});
-    const fl = await predictAnomalyRegs(hms_data)
+    const {anoms} = await predictAnomalyRegs(hms_data)
 
     // reject insane input
-    if(fl['anoms']['decision'] === 'reject')
-      res.status(404).json({flag: fl['anoms']['decision'], msg: fl['anoms']['reasons'][0]})
+    if(anoms['decision'] === 'reject')
+      res.status(404).json({flag: anoms['decision'], msg: anoms['reasons'][0]})
 
     // calculate the separate indices
     const cd = findCd(acc_hms)
@@ -88,7 +88,7 @@ router.post('/new', fetchUser, async (req, res) => {
     const anal = await analyseWithAI(acc_hms)
 
     // generate the report
-    const report = {
+    let report = {
       owner: userId,
       cd: cd,
       hei: hei,
@@ -102,10 +102,15 @@ router.post('/new', fetchUser, async (req, res) => {
       hmcs: acc_hms,
     }
 
+    // update report with anomaly warnings
+    if(anoms.decision == "warn") {
+      report.anoms= anoms
+    }
+
     // save report
     const saved_report = await Reports.create(report)
 
-    return res.status(200).json({ flag: "success", report: saved_report, fl})
+    return res.status(200).json({ flag: "success", report: saved_report })
   } catch (error) {
     console.log(error)
     return res.status(500).json({ flag: "fail", msg: "Server error." })

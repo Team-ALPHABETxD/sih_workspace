@@ -46,7 +46,11 @@ const ReportSchema = new Schema({
     hmcs: [{
         name: String,
         val: Number
-    }]
+    }],
+    anoms:{
+        decision: String,
+        reasons: [String]
+    }
 })
 
 module.exports = model('Report', ReportSchema)
