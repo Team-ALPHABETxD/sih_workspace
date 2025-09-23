@@ -1,14 +1,17 @@
 import json
 import smtplib
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email import encoders
-from reportlab.platypus import SimpleDocTemplate, Image, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Image, Spacer, Paragraph
 from reportlab.lib.pagesizes import A4
 
 app = Flask(__name__)
@@ -41,34 +44,35 @@ def send_email(receiver_email, pdf_filename):
 def generate_report():
     try:
         data = request.json
-        recipient_email = data["recipient"]
-        metals = data["metals"]
-        results = data["results"]
-        heatmap_data = np.array(data["heatmap"])
 
-        # Bar Graph
+        # --- 1. Bar Chart for Heavy Metals ---
+        metals = {m["name"]: m["val"] for m in data["hmcs"]}
         plt.figure()
         plt.bar(metals.keys(), metals.values(), color="steelblue")
         plt.title("Heavy Metal Concentrations")
-        plt.ylabel("Concentration")
+        plt.ylabel("Concentration (mg/L)")
         plt.savefig("bar_chart.png")
         plt.close()
 
-        # Pie Chart
-        plt.figure()
-        plt.pie(results.values(), labels=results.keys(), autopct="%1.1f%%", startangle=90)
-        plt.title("Results Distribution")
-        plt.savefig("pie_chart.png")
-        plt.close()
-
-        # Heatmap
-        plt.figure()
-        sns.heatmap(heatmap_data, annot=True, cmap="coolwarm", cbar=True)
-        plt.title("Heatmap Data")
+        # --- 2. Heatmap (Geospatial clusters from hmap) ---
+        hmap = data.get("hmap", {})
+        plt.figure(figsize=(6, 6))
+        for level, color in zip(["high", "modarate", "low"], ["red", "orange", "green"]):
+            points = hmap.get(level, [])
+            if points:
+                lats = [p["lat"] for p in points]
+                lons = [p["lon"] for p in points]
+                plt.scatter(lons, lats, c=color, label=level.capitalize(),
+                            alpha=0.7, edgecolors="k")
+        plt.xlabel("Longitude")
+        plt.ylabel("Latitude")
+        plt.title("Heatmap Clusters (Lat/Lon)")
+        plt.legend()
+        plt.grid(True)
         plt.savefig("heatmap.png")
         plt.close()
 
-        # Create PDF
+        # --- 3. PDF Report ---
         pdf_file = "report.pdf"
         doc = SimpleDocTemplate(pdf_file, pagesize=A4)
         elements = []
@@ -76,46 +80,55 @@ def generate_report():
         title_style = styles["Title"]
         normal_style = styles["Normal"]
 
-
         elements.append(Paragraph("Heavy Metal Concentration Report", title_style))
         elements.append(Spacer(1, 20))
 
-        elements.append(Paragraph(
-            "This report provides an overview of the measured concentrations of heavy metals found in the water sample"
-            "along with categorized results and a heatmap visualization for further analysis.",
-            normal_style
-        ))
+        # Indices
+        elements.append(Paragraph("Indices Summary", styles["Heading2"]))
+        elements.append(Paragraph(f"Contamination Degree (Cd): {data['cd']:.3f}", normal_style))
+        elements.append(Paragraph(f"Health Exposure Index (HEI): {data['hei']:.3f}", normal_style))
+        elements.append(Paragraph(f"Heavy Metal Pollution Index (HMPI): {data['hmpi']:.3f}", normal_style))
         elements.append(Spacer(1, 20))
 
-
-        elements.append(Paragraph("1. Heavy Metal Concentrations", styles["Heading2"]))
+        # Bar Chart
+        elements.append(Paragraph("Heavy Metal Concentrations", styles["Heading2"]))
         elements.append(Image("bar_chart.png", width=400, height=300))
         elements.append(Spacer(1, 20))
 
-
-        elements.append(Paragraph("2. Results Distribution", styles["Heading2"]))
-        elements.append(Image("pie_chart.png", width=400, height=300))
-        elements.append(Spacer(1, 20))
-
-        elements.append(Paragraph("3. Heatmap Analysis", styles["Heading2"]))
+        # Heatmap
+        elements.append(Paragraph("Heatmap Analysis", styles["Heading2"]))
         elements.append(Image("heatmap.png", width=400, height=300))
         elements.append(Spacer(1, 20))
 
+        # Anomalies
+        anoms = data.get("anoms", {})
+        elements.append(Paragraph("Anomaly Detection", styles["Heading2"]))
+        elements.append(Paragraph(f"Decision: {anoms.get('decision','N/A')}", normal_style))
+        for reason in anoms.get("reasons", []):
+            elements.append(Paragraph(f"- {reason}", normal_style))
+        elements.append(Spacer(1, 20))
 
-        elements.append(Paragraph(
-            "Conclusion: For further analaysis refer to the standard permisible limit by World Health Organis=zation",
-            normal_style
-        ))
+        # Health impacts & precautions
+        anal = data.get("anal", {})
+        elements.append(Paragraph("Health Impacts", styles["Heading2"]))
+        for d in anal.get("deseases", []):
+            elements.append(Paragraph(f"- {d}", normal_style))
+        elements.append(Spacer(1, 20))
 
+        elements.append(Paragraph("Precautions", styles["Heading2"]))
+        for p in anal.get("precautions", []):
+            elements.append(Paragraph(f"- {p}", normal_style))
+        elements.append(Spacer(1, 20))
+
+        pdf_file = "report.pdf"
         doc.build(elements)
 
-        # Send Email
-        send_email(recipient_email, pdf_file)
-
-        return jsonify({"status": "success", "message": f"Report sent to {recipient_email}"})
+        return send_file(pdf_file, as_attachment=True, download_name="report.pdf", mimetype="application/pdf")
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port = 8080)
