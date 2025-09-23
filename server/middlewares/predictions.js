@@ -9,9 +9,27 @@ const genai = new GoogleGenAI({ apiKey: GOOGLE_GEN_AI_API_KEY })
 
 
 
+const predictAnomalyRegs = async(sample) => {
+    try {
+        const res = await fetch(`${PREDICTION_SERVER_API}/anomalyRegs`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(sample)
+        })
+
+        data = await res.json()
+        console.log(data)
+        return data
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 const predictFutureTrend = async (sample) => {
     try {
-        const res = await fetch(PREDICTION_SERVER_API, {
+        const res = await fetch(`${PREDICTION_SERVER_API}/futureTrends`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -232,4 +250,4 @@ const getAiReplies = async (report, query) => {
 }
 
 
-module.exports = { predictFutureTrend, predictHeatmapCoords, analyseWithAI, predictAsss, getAiReplies }
+module.exports = { predictAnomalyRegs, predictFutureTrend, predictHeatmapCoords, analyseWithAI, predictAsss, getAiReplies }

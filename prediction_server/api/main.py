@@ -4,10 +4,34 @@ import numpy as np
 import joblib
 import shap
 from flask_cors import CORS
+from accs import validate_sample
 
 
 app = Flask(__name__)
 CORS(app)
+
+
+
+@app.route('/predict/anomalyRegs', methods=['POST'])
+def predict_anomaly():
+    try:
+       # requested data
+        data = request.get_json()
+        print(f"data: {data}")
+        
+        # dataframe
+        sample_df = pd.DataFrame([data])
+
+        res = validate_sample(sample_df)
+        return jsonify({
+            "anoms" : res
+        })
+    except Exception as e:
+        print("Something went wrong: ", e)
+        return jsonify({
+            'error': "Server not working",
+        })
+
 
 @app.route('/predict/futureTrends', methods=['POST'])
 def predict_future():
@@ -57,6 +81,9 @@ def predict_future():
         return jsonify({
             'error': "Server not working",
         })
+    
+
+
 
 if __name__ == '__main__':
     app.run(debug = True)
