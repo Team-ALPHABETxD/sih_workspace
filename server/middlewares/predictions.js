@@ -2,7 +2,7 @@ const { GoogleGenAI } = require('@google/genai')
 const { query } = require('express-validator')
 require('dotenv').config()
 
-const PREDICTION_SERVER_API = 'http://localhost:5000/predict/futureTrends'
+const PREDICTION_SERVER_API = 'http://127.0.0.1:5000/predict/futureTrends'
 const GOOGLE_GEN_AI_API_KEY = process.env.GEN_AI_API
 
 const genai = new GoogleGenAI({ apiKey: GOOGLE_GEN_AI_API_KEY })
