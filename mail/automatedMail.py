@@ -17,8 +17,8 @@ from reportlab.lib.pagesizes import A4
 app = Flask(__name__)
 
 def send_email(receiver_email, pdf_filename):
-    sender_email = "@gmail.com"
-    password = ""  
+    sender_email = "dev.alphaxd@gmail.com"
+    password = "kqbn lumc gkeh rkon"  
 
     msg = MIMEMultipart()
     msg["From"] = sender_email
@@ -44,6 +44,7 @@ def send_email(receiver_email, pdf_filename):
 def generate_report():
     try:
         data = request.json
+        receiver_email = "anneshabhakta7@gmail.com"
 
         # --- 1. Bar Chart for Heavy Metals ---
         metals = {m["name"]: m["val"] for m in data["hmcs"]}
@@ -83,11 +84,19 @@ def generate_report():
         elements.append(Paragraph("Heavy Metal Concentration Report", title_style))
         elements.append(Spacer(1, 20))
 
+        # Water Sample details
+        elements.append(Paragraph("Sample Collection Summary", styles["Heading2"]))
+        elements.append(Paragraph(f"Latitude: {data['lat']}", normal_style))
+        elements.append(Paragraph(f"Longitude: {data['lon']}", normal_style))
+        elements.append(Paragraph(f"Source: {data['src']}", normal_style))
+        elements.append(Spacer(1, 20))
+
         # Indices
         elements.append(Paragraph("Indices Summary", styles["Heading2"]))
         elements.append(Paragraph(f"Contamination Degree (Cd): {data['cd']:.3f}", normal_style))
         elements.append(Paragraph(f"Health Exposure Index (HEI): {data['hei']:.3f}", normal_style))
         elements.append(Paragraph(f"Heavy Metal Pollution Index (HMPI): {data['hmpi']:.3f}", normal_style))
+        elements.append(Paragraph(f"*All the formulae and definations have been described in the generated report card."))
         elements.append(Spacer(1, 20))
 
         # Bar Chart
@@ -103,7 +112,7 @@ def generate_report():
         # Anomalies
         anoms = data.get("anoms", {})
         elements.append(Paragraph("Anomaly Detection", styles["Heading2"]))
-        elements.append(Paragraph(f"Decision: {anoms.get('decision','N/A')}", normal_style))
+        elements.append(Paragraph(f"Decision: {anoms.get('decision','N/A').upper()}", normal_style))
         for reason in anoms.get("reasons", []):
             elements.append(Paragraph(f"- {reason}", normal_style))
         elements.append(Spacer(1, 20))
@@ -123,6 +132,7 @@ def generate_report():
         pdf_file = "report.pdf"
         doc.build(elements)
 
+        send_email(receiver_email, pdf_file)
         return send_file(pdf_file, as_attachment=True, download_name="report.pdf", mimetype="application/pdf")
 
     except Exception as e:
