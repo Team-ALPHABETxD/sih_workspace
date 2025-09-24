@@ -43,7 +43,7 @@ def validate_sample(sample):
         if val < 0:
             return {"decision": "reject", "reasons": [f"{m} cannot be negative ({val})"]}
         if val > INSANE_RANGES[m][1]:
-            return {"decision": "reject", "reasons": [f"{m} value: {val} is greater than plausible maximum ({INSANE_RANGES[m][1]})"]}
+            return {"decision": "reject", "reasons": [f"{m} value: {val} mg/L is greater than plausible maximum ({INSANE_RANGES[m][1]} mg/L)"]}
         if val > GUIDES[m]:
             reasons.append(f"{m} ({val} mg/L) exceeds regulatory/warning threshold ({GUIDES[m]} mg/L)")
             decision = "warn"
@@ -71,7 +71,7 @@ def validate_sample(sample):
         rel_diff = abs(pred - y) / denom
 
         if rel_diff > 3:
-            reasons.append(f"{t} inconsistent with normal cases (it should be ~ {pred:.4g}, but it is actually ~ {y}, difference ~ {rel_diff:.2f})")
+            reasons.append(f"{t} inconsistent with normal cases (it should be ~ {pred:.4g} mg/L, but it is actually ~ {y} mg/L, difference ~ {rel_diff:.2f})")
             if decision != "reject":
                 decision = "warn"
 
