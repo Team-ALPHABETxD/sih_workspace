@@ -44,7 +44,8 @@ def send_email(receiver_email, pdf_filename):
 def generate_report():
     try:
         data = request.json
-        receiver_email = "anneshabhakta7@gmail.com"
+        print(data)
+        receiver_email = data["rec"]
 
         # --- 1. Bar Chart for Heavy Metals ---
         metals = {m["name"]: m["val"] for m in data["hmcs"]}
@@ -133,7 +134,10 @@ def generate_report():
         doc.build(elements)
 
         send_email(receiver_email, pdf_file)
-        return send_file(pdf_file, as_attachment=True, download_name="report.pdf", mimetype="application/pdf")
+        return jsonify({
+            "flag": "success",
+            "msg": "mail sent sucessfully."
+        })
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
