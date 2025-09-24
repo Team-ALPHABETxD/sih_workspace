@@ -19,6 +19,7 @@ const {
 const Reports = require('../models/Reports')
 const fetchUser = require('../middlewares/auth')
 const Users = require('../models/Users')
+const { sendMail } = require('../middlewares/mail')
 
 const router = express.Router()
 
@@ -110,7 +111,19 @@ router.post('/new', fetchUser, async (req, res) => {
     // save report
     const saved_report = await Reports.create(report)
 
-    return res.status(200).json({ flag: "success", report: saved_report })
+    // update saved report for mailing
+    let report_obj = saved_report.toObject()
+    const encSrc = src === 0 ? "Lake" : src === 1 ? "Canal" : "River"
+    report_obj.rec = owner.email
+    report_obj.lat = coords.lat
+    report_obj.lon = coords.lon
+    report_obj.src = encSrc
+
+    console.log(report_obj)
+    const mail_sts = await sendMail(report_obj)
+
+
+    return res.status(200).json({ flag: "success", report: saved_report, mail_sts: mail_sts})
   } catch (error) {
     console.log(error)
     return res.status(500).json({ flag: "fail", msg: "Server error." })
