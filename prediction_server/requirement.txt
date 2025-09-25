@@ -4,3 +4,4 @@ numpy
 joblib
 shap
 flask-cors
+gunicorn
