@@ -3,5 +3,7 @@ reportlab
 flask
 flask-cors
 numpy
+sendgrid
+python-dotenv
 gunicorn
 uvicorn
