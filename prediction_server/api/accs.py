@@ -50,7 +50,7 @@ def validate_sample(sample):
 
 
     # 2) AI anomally detection
-    iso = joblib.load("../model/anomaly_detector_iso_model.joblib")
+    iso = joblib.load("model/anomaly_detector_iso_model.joblib")
 
     iso_pred = iso.predict(sample)
     if iso_pred == -1:
