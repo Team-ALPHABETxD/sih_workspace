@@ -62,7 +62,7 @@ def validate_sample(sample):
     for t in POLLUTANTS:
         X = sample[[m for m in POLLUTANTS if m != t]]
         y = sample.iloc[0][t]
-        rf = joblib.load(f"../model/regs_{t}.joblib")
+        rf = joblib.load(f"model/regs_{t}.joblib")
 
         pred = rf.predict(X)[0]
 
