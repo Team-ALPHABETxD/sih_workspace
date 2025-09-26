@@ -78,13 +78,14 @@ def predict_future():
             
         # response send
         return jsonify({
-            'prediction': pred_probs.tolist(),
-            'shap': shap_dict
+            "prediction": pred_probs.tolist(),
+            "shap": shap_dict
         })
     except Exception as e:
         print("Something went wrong", e)
         return jsonify({
-            'error': "Server not working",
+            "error": "Server not working",
+            "e": e
         })
     
 
