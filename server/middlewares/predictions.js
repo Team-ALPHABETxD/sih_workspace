@@ -2,7 +2,7 @@ const { GoogleGenAI } = require('@google/genai')
 const { query } = require('express-validator')
 require('dotenv').config()
 
-const PREDICTION_SERVER_API = 'http://127.0.0.1:5000/predict'
+const PREDICTION_SERVER_API = process.env.PREDICTION_SERVER_API
 const GOOGLE_GEN_AI_API_KEY = process.env.GEN_AI_API
 
 const genai = new GoogleGenAI({ apiKey: GOOGLE_GEN_AI_API_KEY })
@@ -11,6 +11,7 @@ const genai = new GoogleGenAI({ apiKey: GOOGLE_GEN_AI_API_KEY })
 
 const predictAnomalyRegs = async(sample) => {
     try {
+        console.log(PREDICTION_SERVER_API)
         const res = await fetch(`${PREDICTION_SERVER_API}/anomalyRegs`, {
             method: 'POST',
             headers: {
