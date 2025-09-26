@@ -32,6 +32,11 @@ def predict_anomaly():
             'error': "Server not working",
         })
 
+# test command
+@app.route("/", methods=["GET"])
+def home():
+    return "Prediction server is running!"
+
 
 @app.route('/predict/futureTrends', methods=['POST'])
 def predict_future():
@@ -45,7 +50,7 @@ def predict_future():
         print(sample_df.columns)
         
         # model fetch
-        model = joblib.load('../model/future_predict_model.joblib')
+        model = joblib.load('model/future_predict_model.joblib')
         
         # predictions
         preds = model.predict(sample_df)
