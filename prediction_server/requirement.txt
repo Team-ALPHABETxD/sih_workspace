@@ -5,3 +5,4 @@ joblib
 shap
 flask-cors
 gunicorn
+uvicorn
