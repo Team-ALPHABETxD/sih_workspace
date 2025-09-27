@@ -10,28 +10,41 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Heatmap from "./_components/Heatmap";
-import { ChartBarLabel } from "./_components/ChartBarLabel";
 import { HeavyMetalTrends } from "./_components/HeavyMetalTrends";
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { ChartConfig } from "@/components/ui/chart";
 import { FutureTrends } from "./_components/futureTrends";
 import { ShapBarChart } from "./_components/ShapBarCharts";
 
 import { RiChat3Line, RiCloseLine } from "react-icons/ri";
+
+interface FutureData {
+  prediction: number[][];
+  shap: Record<string, number>;
+}
+
+interface Location {
+  lat: number;
+  lon: number;
+  _id?: string;
+}
+
+interface HmapData {
+  curr: Location;
+  high: Location[];
+  modarate: Location[];
+  low: Location[];
+}
+
+interface Analysis {
+  deseases: string[];
+  precautions: string[];
+}
+
+interface HeavyMetal {
+  name: string;
+  val: number;
+  _id?: string;
+}
 
 interface Report {
   _id?: string;
@@ -41,19 +54,18 @@ interface Report {
   sd: string | number;
   pd: string | number;
   isCritical: boolean;
-  fut: any;
-  hmap: any;
-  anal: any;
-  hmcs: Array<{
-    name: string;
-    val: number;
-  }>;
+  fut: FutureData;
+  hmap: HmapData;
+  anal: Analysis;
+  hmcs: HeavyMetal[];
+  owner?: string;
+  __v?: number;
 }
 
 const GeneratedReportPage: React.FC = () => {
   const searchParams = useSearchParams();
   const reportData = searchParams.get("reportData");
-  const { isAuthenticated, token: authTokenFromContext } = useAuth() as any;
+  const { isAuthenticated } = useAuth();
   const [report, setReport] = useState<Report | null>(null);
 
   // Chat widget state
@@ -134,7 +146,7 @@ const GeneratedReportPage: React.FC = () => {
     },
   };
 
-  const reportId = (report && ((report as any)._id || (report as any).id)) || null;
+  const reportId = report?._id || null;
   const sendMessageToBackend = async (text: string) => {
     if (!reportId) {
       toast.error("Report id not found — cannot chat.");
@@ -159,13 +171,20 @@ const GeneratedReportPage: React.FC = () => {
         "Content-Type": "application/json",
       };
 
-      const token =
-        (authTokenFromContext as string) ||
-        (typeof window !== "undefined" ? localStorage.getItem("token") || localStorage.getItem("authToken") || localStorage.getItem("mm_token") : null);
+      const token = typeof window !== "undefined" 
+        ? localStorage.getItem("token") || localStorage.getItem("authToken") || localStorage.getItem("mm_token") 
+        : null;
 
       if (token) {
         // If your backend uses a different header name (eg "x-auth-token"), replace "Authorization" below.
         headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      interface ChatResponse {
+        flag: "success" | "error";
+        msg?: string;
+        rep: string | string[];
+        error?: string;
       }
 
       const res = await fetch(`${API_BASE}/server/v1/apis/report/chat/${reportId}`, {
@@ -174,7 +193,7 @@ const GeneratedReportPage: React.FC = () => {
         body: JSON.stringify({ q: text }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as ChatResponse;
 
       if (!res.ok || data.flag !== "success") {
         console.error("Chat API error:", data);

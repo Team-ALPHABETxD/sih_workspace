@@ -1,6 +1,5 @@
 // components/ui/navbar-menu.tsx
 "use client";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Transition } from "motion/react";
 import React, { useState } from "react";
@@ -94,11 +93,13 @@ export const HoveredLink = ({ children, ...rest }: React.AnchorHTMLAttributes<HT
 
 // ---------- Main NavbarMenu Component ----------
 export default function NavbarMenu() {
-  const pathname = usePathname();                  // <<< new
-  // do not show global navbar on dashboard routes
-  if (pathname && pathname.startsWith("/dashboard")) return null;
-
+  const pathname = usePathname();
   const [active, setActive] = useState<string | null>(null);
+  
+  // Early return with null, but after hooks
+  if (pathname && pathname.startsWith("/dashboard")) {
+    return null;
+  }
 
   return (
     <div className="fixed top-6 inset-x-0 mx-auto w-max z-50">

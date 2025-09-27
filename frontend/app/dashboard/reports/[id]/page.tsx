@@ -2,37 +2,39 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { toast } from "react-toastify";
-import {
-  CheckCircle,
-  AlertTriangle,
-  AlertCircle,
-  ShieldCheck,
-  ArrowLeft,
-  TrendingUp,
-} from "lucide-react";
+import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Heatmap from "../../generate/report/_components/Heatmap";
-import { HeavyMetalTrends } from "../../generate/report/_components/HeavyMetalTrends";
-import { ChartBarLabel } from "../../generate/report/_components/ChartBarLabel";
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import ReportCard from "@/components/reportCard";
+
+interface Location {
+  lat: number;
+  lon: number;
+  _id?: string;
+}
+
+interface HmapData {
+  curr: Location;
+  high: Location[];
+  modarate: Location[];
+  low: Location[];
+}
+
+interface FutureData {
+  prediction: number[][];
+  shap: Record<string, number>;
+}
+
+interface Analysis {
+  deseases: string[];
+  precautions: string[];
+}
+
+interface HeavyMetal {
+  name: string;
+  val: number;
+  _id?: string;
+}
 
 interface Report {
   _id: string;
@@ -41,14 +43,11 @@ interface Report {
   hmpi: number;
   sd: number;
   pd: number;
-  isCritical: number;
-  fut: any;
-  hmap: any;
-  anal: any;
-  hmcs: Array<{
-    name: string;
-    val: number;
-  }>;
+  isCritical: boolean;
+  fut: FutureData;
+  hmap: HmapData;
+  anal: Analysis;
+  hmcs: HeavyMetal[];
 }
 
 const ReportDetailPage: React.FC = () => {
@@ -102,7 +101,7 @@ const ReportDetailPage: React.FC = () => {
           console.error("Failed to fetch report, status:", response.status);
           setError("Failed to fetch report");
         }
-      } catch (err) {
+      } catch {
         setError("Network error occurred");
       } finally {
         setLoading(false);
@@ -168,19 +167,6 @@ const ReportDetailPage: React.FC = () => {
       </div>
     );
   }
-
-  // Convert backend hmcs into chart data
-  const chartData = report.hmcs.map((hmc) => ({
-    name: hmc.name,
-    value: hmc.val,
-  }));
-
-  const chartConfig: ChartConfig = {
-    value: {
-      label: "Concentration (mg/L)",
-      color: "var(--chart-1)",
-    },
-  };
 
   return (
     <div className="flex h-full w-full flex-1 flex-col gap-4 p-6 md:p-10 overflow-y-auto bg-gray-50 text-gray-900">

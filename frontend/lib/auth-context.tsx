@@ -3,15 +3,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { toast } from "react-toastify";
 interface User {
-  // flag: string;
-  // user: {
-  //   id: string;
-  //   name?: string;
-  //   email?: string;
-  //   occ?: string;
-  //   age?: number;
-  //   gender?: string;
-  // };
   id: string;
   name?: string;
   email?: string;
@@ -20,12 +11,22 @@ interface User {
   gender?: string;
 }
 
+interface SignupData {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  age: string;
+  gen: string;
+  occ: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (data: any) => Promise<void>;
+  signup: (data: SignupData) => Promise<void>;
   logout: () => void;
 }
 
@@ -51,7 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         localStorage.removeItem("token");
       }
-    } catch (error) {
+    } catch {
       setUser(null);
       localStorage.removeItem("token");
     } finally {
@@ -89,13 +90,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       setUser(null);
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("An unexpected error occurred during login");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const signup = async (data: any) => {
+  const signup = async (data: SignupData) => {
     setIsLoading(true);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/server/v1/apis/user/signup`, {
@@ -109,11 +113,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (res.ok) {
         // After signup, optionally auto-login or redirect handled by caller
       } else {
-        const errorData = await res.json();
+        const errorData = await res.json() as { message?: string };
         throw new Error(errorData.message || "Signup failed");
       }
     } catch (error) {
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("An unexpected error occurred during signup");
     } finally {
       setIsLoading(false);
     }

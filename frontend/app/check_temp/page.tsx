@@ -1,21 +1,53 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import { useAuth } from "@/lib/auth-context";
-import { toast } from "react-toastify";
+import React from "react";
 import { CheckCircle, AlertTriangle, AlertCircle, ShieldCheck } from "lucide-react";
 import Heatmap from "./_components/Heatmap";
 
-interface Report {
+type HmcsItem = {
+  name: string;
+  val: number;
+  _id: string;
+}
+
+type Location = {
+  lat: number;
+  lon: number;
+  _id?: string;
+}
+
+type HmapData = {
+  curr: Location;
+  high: Location[];
+  modarate: Location[];
+  low: Location[];
+}
+
+type Analysis = {
+  deseases: string[];
+  precautions: string[];
+}
+
+type FutureData = {
+  prediction: number[][];
+  shap: {
+    [key: string]: number;
+  };
+}
+
+type Report = {
+  owner: string;
   cd: number;
   hei: number;
   hmpi: number;
-  sd: string;
-  pd: string;
-  isCritical: boolean;
-  fut: any;
-  hmap: any;
-  anal: any;
+  sd: number | string;
+  pd: number | string;
+  isCritical: boolean | number;
+  fut: FutureData;
+  hmap: HmapData;
+  anal: Analysis;
+  hmcs: HmcsItem[];
+  _id?: string;
+  __v?: number;
 }
 
 const GeneratedReportPage: React.FC = () => {
@@ -44,7 +76,7 @@ const GeneratedReportPage: React.FC = () => {
   }, [reportData, isAuthenticated]); */
 
 
-  const report = {
+  const report: Report = {
         "owner": "68c0376558d95d0d5253c8d4",
         "cd": 2.409333333333334,
         "hei": 11.40933333333333,

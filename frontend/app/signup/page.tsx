@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 type FormErrors = { [key: string]: string };
 
@@ -114,7 +115,7 @@ export default function SignupPage() {
 
         await signup(submissionData);
         router.push("/login");
-      } catch (error) {
+      } catch {
         setErrors({
           general: "An unexpected error occurred. Please try again later.",
         });
@@ -166,9 +167,11 @@ export default function SignupPage() {
                   Join us in protecting water resources through advanced heavy
                   metal prediction and environmental monitoring.
                 </p>
-                <img
+                <Image
                   src="/signupPage.svg"
                   alt="Signup illustration"
+                  width={400}
+                  height={224}
                   className="w-full h-56 object-contain"
                 />
               </motion.div>

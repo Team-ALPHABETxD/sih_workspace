@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
-
-import Link from "next/link"
+import Image from "next/image";
+import Link from "next/link";
 
 
 import { HighlightText } from "@/components/ui/shadcn-io/highlight-text";
@@ -174,9 +174,11 @@ export default function Home() {
           {/* Card 1 */}
           <Card className="flex-1 p-4 rounded-xl shadow-lg bg-orange-50 flex flex-col min-h-[420px]">
             <div className="aspect-[4/3] rounded-md bg-gray-100 mb-4 overflow-hidden">
-              <img
+              <Image
                 src="/datasetimg.jpg"
                 alt="Data visualization feature"
+                width={400}
+                height={300}
                 className="w-full h-full object-cover rounded-md"
               />
             </div>
@@ -194,9 +196,11 @@ export default function Home() {
           {/* Card 2 */}
           <Card className="flex-1 p-4 rounded-xl shadow-lg bg-orange-50 flex flex-col min-h-[420px]">
             <div className="aspect-[4/3] rounded-md bg-gray-100 mb-4 overflow-hidden">
-              <img
+              <Image
                 src="/analysis.jpg"
                 alt="Analysis feature"
+                width={400}
+                height={300}
                 className="w-full h-full object-cover rounded-md"
               />
             </div>
@@ -214,9 +218,11 @@ export default function Home() {
           {/* Card 3 */}
           <Card className="flex-1 p-4 rounded-xl shadow-lg bg-orange-50 flex flex-col min-h-[420px]">
             <div className="aspect-[4/3] rounded-md bg-gray-100 mb-4 overflow-hidden">
-              <img
+              <Image
                 src="/env.jpg"
                 alt="Environmental awareness feature"
+                width={400}
+                height={300}
                 className="w-full h-full object-cover rounded-md"
               />
             </div>

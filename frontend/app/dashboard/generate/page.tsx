@@ -41,15 +41,36 @@ export default function GeneratePage() {
 
   const [loading, setLoading] = useState(false);
 
+  type MetalKey = 'cd' | 'cr' | 'pb' | 'fe' | 'co' | 'mn' | 'ni' | 'cu' | 'zn';
+  
+  interface FormState {
+    lat: string;
+    lon: string;
+    cd: string;
+    cr: string;
+    pb: string;
+    fe: string;
+    co: string;
+    mn: string;
+    ni: string;
+    cu: string;
+    zn: string;
+    source: string;
+    units: Record<MetalKey, string>;
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (Object.keys(metalLabels).includes(name) || name === 'lat' || name === 'lon') {
+      setFormData((prev: FormState) => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleDropdownChange = (name: string, value: string) => {
-    setFormData({
-      ...formData,
-      units: { ...formData.units, [name]: value },
-    });
+  const handleDropdownChange = (name: MetalKey, value: string) => {
+    setFormData((prev: FormState) => ({
+      ...prev,
+      units: { ...prev.units, [name]: value },
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,8 +91,8 @@ export default function GeneratePage() {
 
     const hms = Object.keys(metalLabels).map((metal) => ({
       name: metal,
-      val: parseFloat((formData as any)[metal]),
-      unit: formData.units[metal],
+      val: parseFloat(formData[metal as MetalKey] || '0'),
+      unit: formData.units[metal as MetalKey],
     }));
 
     const src = 0;
@@ -107,7 +128,7 @@ export default function GeneratePage() {
   };
 
   // Dropdown Component (with selected unit showing)
-  const UnitDropdown = ({ field }: { field: string }) => (
+  const UnitDropdown = ({ field }: { field: MetalKey }) => (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button className="flex items-center justify-between rounded border px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200">
@@ -172,7 +193,7 @@ export default function GeneratePage() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         {/* Coords */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {["lat", "lon"].map((coord) => (
+          {(["lat", "lon"] as const).map((coord) => (
             <div key={coord} className="flex flex-col gap-2">
               <label className="text-gray-700 flex items-center gap-2 capitalize">
                 <div className="w-4 h-4 bg-gray-400 rounded"></div> {coord}
@@ -183,7 +204,7 @@ export default function GeneratePage() {
                   type="number"
                   step="any"
                   name={coord}
-                  value={(formData as any)[coord]}
+                  value={formData[coord]}
                   onChange={handleChange}
                   required
                 />
@@ -194,7 +215,7 @@ export default function GeneratePage() {
 
         {/* Heavy Metals + Source */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {Object.keys(metalLabels).map((metal) => (
+          {(Object.keys(metalLabels) as MetalKey[]).map((metal) => (
             <div key={metal} className="flex flex-col gap-2">
               <label className="text-gray-700 flex items-center gap-2 capitalize">
                 <div className="w-4 h-4 bg-gray-400 rounded"></div> {metalLabels[metal]} value
@@ -205,7 +226,7 @@ export default function GeneratePage() {
                   type="number"
                   step="any"
                   name={metal}
-                  value={(formData as any)[metal]}
+                  value={formData[metal]}
                   onChange={handleChange}
                   required
                 />

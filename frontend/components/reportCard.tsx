@@ -10,7 +10,6 @@ import {
 import { RiChat3Line, RiCloseLine } from "react-icons/ri";
 
 
-import { useAuth } from "@/lib/auth-context";
 import { HeavyMetalTrends } from "./HeavyMetalTrends";
 import { FutureTrends } from "./FutureTrends";
 import { ShapBarChart } from "./ShapBarChart";
@@ -24,9 +23,20 @@ interface Report {
   sd: string | number;
   pd: string | number;
   isCritical: boolean;
-  fut: any;
-  hmap: any;
-  anal: any;
+  fut: {
+    prediction?: Array<Array<number>>;
+    shap?: Record<string, number>;
+  };
+  hmap: {
+    curr?: { lat: number; lon: number };
+    high: Array<{ lat: number; lon: number }>;
+    modarate: Array<{ lat: number; lon: number }>;
+    low: Array<{ lat: number; lon: number }>;
+  };
+  anal: {
+    deseases?: string[];
+    precautions?: string[];
+  };
   hmcs: Array<{
     name: string;
     val: number;
@@ -38,7 +48,11 @@ interface ReportCardProps {
 }
 
 const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
-  const { token: authTokenFromContext } = useAuth() as any;
+  // Get token from localStorage since it's not in the auth context
+  const authTokenFromContext = typeof window !== 'undefined' ? 
+    localStorage.getItem('token') || 
+    localStorage.getItem('authToken') || 
+    localStorage.getItem('mm_token') : null;
   const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<
     Array<{ id: string; from: "bot" | "user"; text: string }>
@@ -66,7 +80,7 @@ const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
     },
   };
 
-  const reportId = report._id || (report as any).id;
+  const reportId = report._id || (report as { id?: string }).id;
 
   const sendMessageToBackend = async (text: string) => {
     if (!reportId) {
@@ -124,7 +138,7 @@ const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
           { id: `${Date.now()}-b`, from: "bot", text: botReply },
         ]);
       }
-    } catch (err) {
+    } catch {
       setMessages((m) => [
         ...m,
         {

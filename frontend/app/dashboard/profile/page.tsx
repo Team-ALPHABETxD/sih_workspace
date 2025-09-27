@@ -20,18 +20,15 @@ export default function ProfilePage() {
   });
 
   const [isEditing, setIsEditing] = useState(false);
-  console.log("User data:", user);
-  console.log("User type:", typeof user);
-  console.log("User keys:", user ? Object.keys(user) : "null");
 
   useEffect(() => {
-    if (user && user.user) {
+    if (user) {
       setProfileData({
-        name: user.user.name || "",
-        email: user.user.email || "",
-        occupation: user.user.occ || "",
-        age: user.user.age?.toString() || "",
-        gender: user.user.gender || ""
+        name: user.name || "",
+        email: user.email || "",
+        occupation: user.occ || "",
+        age: user.age?.toString() || "",
+        gender: user.gender || ""
       });
     }
   }, [user]);
@@ -51,13 +48,13 @@ export default function ProfilePage() {
 
   const handleCancel = () => {
     // Reset to original data from user context
-    if (user && user.user) {
+    if (user) {
       setProfileData({
-        name: user.user.name || "",
-        email: user.user.email || "",
-        occupation: user.user.occ || "",
-        age: user.user.age?.toString() || "",
-        gender: user.user.gender || ""
+        name: user.name || "",
+        email: user.email || "",
+        occupation: user.occ || "",
+        age: user.age?.toString() || "",
+        gender: user.gender || ""
       });
     }
     setIsEditing(false);
