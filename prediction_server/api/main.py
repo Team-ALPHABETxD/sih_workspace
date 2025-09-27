@@ -4,7 +4,7 @@ import numpy as np
 import joblib
 import shap
 from flask_cors import CORS
-from .accs import validate_sample
+from accs import validate_sample
 
 
 app = Flask(__name__)

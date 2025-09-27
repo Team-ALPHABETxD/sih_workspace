@@ -58,6 +58,11 @@ interface Report {
   hmap: HmapData;
   anal: Analysis;
   hmcs: HeavyMetal[];
+  anoms?: {
+    decision: string;
+    reasons: string[];
+  };
+
   owner?: string;
   __v?: number;
 }
@@ -105,6 +110,7 @@ const GeneratedReportPage: React.FC = () => {
           ...parsedReport,
           sd,
           pd,
+          anoms: parsedReport.anoms || undefined,
         });
       } catch (error) {
         console.error("Error parsing report data:", error);
@@ -277,6 +283,7 @@ const GeneratedReportPage: React.FC = () => {
               </p>
             </div>
 
+              
             {/* HEI */}
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200">
               <h3 className="text-lg font-semibold text-purple-900 mb-2">HEI</h3>
@@ -328,6 +335,32 @@ const GeneratedReportPage: React.FC = () => {
               <p className="text-xl font-medium text-gray-700">{report.pd}</p>
             </div>
           </div>
+
+          {/* Anomalies */}
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-lg border border-orange-200">
+                <h3 className="text-lg font-semibold text-orange-900 mb-2 flex items-center space-x-2">
+                  <AlertTriangle className="h-5 w-5 text-orange-600" />
+                  <span>Anomalies</span>
+                </h3>
+                {report.anoms ? (
+                  <>
+                    <p className="text-3xl font-bold text-orange-600 mb-2">
+                      {report.anoms.decision === "warn" ? "Warning" : report.anoms.decision.toUpperCase()}
+                    </p>
+                    {report.anoms.reasons && report.anoms.reasons.length > 0 ? (
+                      <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
+                        {report.anoms.reasons.map((reason: string, index: number) => (
+                          <li key={index}>{reason}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-gray-700">No specific reasons provided.</p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-sm text-gray-700">No anomalies detected.</p>
+                )}
+              </div>
 
           {/* NEW: Graph */}
           <HeavyMetalTrends chartData={chartData} chartConfig={chartConfig} />

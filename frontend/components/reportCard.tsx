@@ -41,6 +41,10 @@ interface Report {
     name: string;
     val: number;
   }>;
+  anoms?: {
+    decision: string;
+    reasons: string[];
+  };
 }
 
 interface ReportCardProps {
@@ -203,6 +207,8 @@ const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
               </p>
             </div>
 
+           
+
             {/* HEI */}
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200">
               <h3 className="text-lg font-semibold text-purple-900 mb-2">HEI</h3>
@@ -247,6 +253,32 @@ const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
           <p className="text-xl font-medium text-gray-700">{report.pd}</p>
         </div>
       </div>
+
+       {/* Anomalies */}
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-lg border border-orange-200">
+              <h3 className="text-lg font-semibold text-orange-900 mb-2 flex items-center space-x-2">
+                <AlertTriangle className="h-5 w-5 text-orange-600" />
+                <span>Anomalies</span>
+              </h3>
+              {report.anoms ? (
+                <>
+                  <p className="text-3xl font-bold text-orange-600 mb-2">
+                    {report.anoms.decision === "warn" ? "Warning" : report.anoms.decision.toUpperCase()}
+                  </p>
+                  {report.anoms.reasons && report.anoms.reasons.length > 0 ? (
+                    <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
+                      {report.anoms.reasons.map((reason: string, index: number) => (
+                        <li key={index}>{reason}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-gray-700">No specific reasons provided.</p>
+                  )}
+                </>
+              ) : (
+                <p className="text-sm text-gray-700">No anomalies detected.</p>
+              )}
+            </div>
 
       {/* Graphs */}
       <HeavyMetalTrends chartData={chartData} chartConfig={chartConfig} />
