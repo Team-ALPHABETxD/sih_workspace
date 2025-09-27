@@ -1,4 +1,5 @@
 import json
+import os
 import smtplib
 import matplotlib
 matplotlib.use('Agg')
@@ -13,10 +14,54 @@ from email import encoders
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Image, Spacer, Paragraph
 from reportlab.lib.pagesizes import A4
+import base64
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
+from dotenv import load_dotenv
 
 app = Flask(__name__)
+load_dotenv()
 
 def send_email(receiver_email, pdf_filename):
+    # ⚠️ Store your API key in environment variable SENDGRID_API_KEY
+    SG_API_KEY = os.getenv("SG_API_KEY")
+    print(SG_API_KEY)
+
+    sg = SendGridAPIClient(api_key=SG_API_KEY)
+
+    # Create the message
+    message = Mail(
+        from_email="dev.alphaxd@gmail.com",   # must be verified in SendGrid
+        to_emails=receiver_email,
+        subject="Heavy Metal Report",
+        plain_text_content=(
+            "Please find attached the heavy metal concentration report.\n"
+            "This is a system generated email. Kindly do not respond to this email.\n"
+            "This email was sent from a notification-only address that cannot accept incoming email. "
+            "Please do not reply to this message."
+        )
+    )
+
+    # Attach PDF
+    with open(pdf_filename, "rb") as f:
+        data = f.read()
+        encoded_file = base64.b64encode(data).decode()
+        attached_file = Attachment(
+            FileContent(encoded_file),
+            FileName(pdf_filename),
+            FileType("application/pdf"),
+            Disposition("attachment")
+        )
+        message.attachment = attached_file
+
+    # Send email
+    response = sg.send(message)
+    print(response.status_code, response.body, response.headers)
+
+
+
+
+def send_email_(receiver_email, pdf_filename):
     sender_email = "dev.alphaxd@gmail.com"
     password = "kqbn lumc gkeh rkon"  
 
@@ -140,6 +185,7 @@ def generate_report():
         })
 
     except Exception as e:
+        print(e)
         return jsonify({"status": "error", "message": str(e)})
 
 

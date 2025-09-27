@@ -1,4 +1,4 @@
-const MAIL_SERVER_API = 'http://127.0.0.1:8080/automail'
+const MAIL_SERVER_API = process.env.MAIL_SERVER_API
 
 const sendMail = async(report) => {
     try {
