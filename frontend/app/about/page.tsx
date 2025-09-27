@@ -188,7 +188,7 @@ export default function AboutPage() {
                 Building a Sustainable Future
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed">
-                Our vision extends beyond current challenges. We're building a comprehensive ecosystem 
+                Our vision extends beyond current challenges. We are building a comprehensive ecosystem 
                 for environmental monitoring that will help create a sustainable future where clean water 
                 is accessible to all and environmental protection is data-driven and proactive.
               </p>
