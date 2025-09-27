@@ -48,6 +48,10 @@ interface Report {
   hmap: HmapData;
   anal: Analysis;
   hmcs: HeavyMetal[];
+  anoms?: {
+    decision: string;
+    reasons: string[];
+  };
 }
 
 const ReportDetailPage: React.FC = () => {
