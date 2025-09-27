@@ -114,7 +114,7 @@ export default function TeamPage() {
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Meet the talented individuals behind our environmental monitoring platform. 
-              Together, we're building the future of water quality analysis.
+              Together, we are building the future of water quality analysis.
             </p>
           </motion.div>
         </div>
@@ -199,7 +199,7 @@ export default function TeamPage() {
               Our Collective Impact
             </h2>
             <p className="text-xl text-blue-100">
-              Together, we've built something remarkable
+              Together, we had built something remarkable
             </p>
           </div>
           
@@ -237,7 +237,7 @@ export default function TeamPage() {
               Ready to Join Our Mission?
             </h2>
             <p className="text-lg text-gray-600 mb-8">
-              We're always looking for passionate individuals who want to make a difference 
+              We are always looking for passionate individuals who want to make a difference 
               in environmental protection and data science.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
