@@ -12,6 +12,7 @@ import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
+import { Link } from "lucide-react";
 
 const links = [
   {
@@ -118,8 +119,8 @@ export default function DashboardLayout({
 
 export const Logo = () => {
   return (
-    <a
-      href="/"
+    <Link
+      to="/"
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-gray-700"
     >
       <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gray-700" />
@@ -130,17 +131,17 @@ export const Logo = () => {
       >
         Aqua Vision
       </motion.span>
-    </a>
+    </Link>
   );
 };
 
 export const LogoIcon = () => {
   return (
-    <a
-      href="/dashboard"
+    <Link
+      to="/dashboard"
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-gray-700"
     >
       <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gray-700" />
-    </a>
+    </Link>
   );
 };
