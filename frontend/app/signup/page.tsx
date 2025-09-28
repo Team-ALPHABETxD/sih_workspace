@@ -127,7 +127,7 @@ export default function SignupPage() {
     <div
       className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
       style={{
-        backgroundImage: "url(/backimg1.jpg)",
+        backgroundImage: "url(/pic8.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -170,7 +170,7 @@ export default function SignupPage() {
                 <Image
                   src="/signupPage.svg"
                   alt="Signup illustration"
-                  width={400}
+                  width={100}
                   height={224}
                   className="w-full h-56 object-contain"
                 />

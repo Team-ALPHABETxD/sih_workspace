@@ -1,13 +1,29 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative">
+      {/* Back Button */}
+      <div className="fixed top-4 left-4 z-50">
+        <Link href="/dashboard">
+          <motion.button
+            className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md border border-gray-200 hover:shadow-lg transition-shadow"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </motion.button>
+        </Link>
+      </div>
+
       {/* Hero Section */}
-      <div className="relative py-20 px-4">
+      <div className="relative py-20 px-4 pt-16">
         <div className="max-w-7xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -39,7 +55,7 @@ export default function AboutPage() {
           <div className="order-2 lg:order-1">
             <div className="relative h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src="/env.jpg"
+                src="/pic3.jpg"
                 alt="Environmental Protection"
                 fill
                 className="object-cover"
@@ -137,7 +153,7 @@ export default function AboutPage() {
           <div className="order-2 lg:order-1">
             <div className="relative h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src="/pic2.jpg"
+                src="/pic6.jpg"
                 alt="Community Impact"
                 fill
                 className="object-cover"
@@ -207,7 +223,7 @@ export default function AboutPage() {
           <div>
             <div className="relative h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src="/pollution.jpg"
+                src="/pic4.jpg"
                 alt="Future Vision"
                 fill
                 className="object-cover"

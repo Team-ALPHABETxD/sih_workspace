@@ -52,11 +52,11 @@ export default function LoginPage() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `url('/datasetimg.jpg')`,
+          backgroundImage: `url('/pic6.jpg')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          filter: "blur(15px)",
+          filter: "blur(10px)",
           transform: "scale(1.1)"
         }}
       ></div>
@@ -176,7 +176,7 @@ export default function LoginPage() {
         {/* Right Side - Analysis Image */}
         <div className="flex-1 relative overflow-hidden">
           <Image
-            src="/datasetimg.jpg"
+            src="/pic7.jpg"
             alt="Analysis"
             width={600}
             height={800}

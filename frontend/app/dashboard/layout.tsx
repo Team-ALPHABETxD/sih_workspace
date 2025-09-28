@@ -40,7 +40,7 @@ const links = [
     label: "Profile",
     href: "/dashboard/profile",
     icon: (
-      <IconSettings className="h-7 w-7 shrink-0 text-gray-700" />
+      <IconSettings className="h-5 w-5 shrink-0 text-gray-700" />
     ),
   },
   {
