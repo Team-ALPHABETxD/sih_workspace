@@ -1,12 +1,15 @@
+const dotenv=require("dotenv")
+dotenv.config()
 const express = require('express')
 const connectToMongo = require('./db')
 const cors = require('cors')
 const app = express()
-const PORT = 8000
+const PORT = process.env.PORT || 8000
+const BASE_URL=process.env.FRONTEND_BASE_URL
 
 app.use(express.json())
 app.use(cors({ 
-    origin: 'http://localhost:3000',
+    origin: `${BASE_URL}`,
     credentials: true,
  }))
  
