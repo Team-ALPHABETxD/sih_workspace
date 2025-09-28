@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "react-toastify";
@@ -573,4 +573,17 @@ const GeneratedReportPage: React.FC = () => {
   );
 };
 
-export default GeneratedReportPage;
+const GeneratedReportPageWrapper = () => (
+  <Suspense fallback={
+    <div className="flex justify-center items-center h-full">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p>Loading report...</p>
+      </div>
+    </div>
+  }>
+    <GeneratedReportPage />
+  </Suspense>
+);
+
+export default GeneratedReportPageWrapper;
