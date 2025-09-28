@@ -161,7 +161,7 @@ export default function SignupPage() {
                 className="text-white"
               >
                 <h2 className="text-4xl font-bold mb-4 text-center">
-                  Metal Craft
+                  Aqua Vision
                 </h2>
                 <p className="text-lg mb-8 opacity-90 text-center">
                   Join us in protecting water resources through advanced heavy
@@ -182,7 +182,7 @@ export default function SignupPage() {
               <div className="w-full max-w-md">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                    Join Metal Craft
+                    Join Aqua Vision
                   </h2>
                   <p className="text-gray-600 text-sm">
                     {currentStep === 0
