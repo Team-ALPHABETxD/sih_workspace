@@ -9,7 +9,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative">
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">
-        <Link href="/dashboard">
+        <Link href="/">
           <motion.button
             className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md border border-gray-200 hover:shadow-lg transition-shadow"
             whileHover={{ scale: 1.05 }}

@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
+import Link from "next/link";
 
 export default function TeamPage() {
   const teamMembers = [
@@ -79,6 +80,21 @@ export default function TeamPage() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+
+      {/* Back Button */}
+      <div className="fixed top-4 left-4 z-50">
+        <Link href="/">
+          <motion.button
+            className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md border border-gray-200 hover:shadow-lg transition-shadow"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </motion.button>
+        </Link>
+      </div>
       
       {/* Page Heading */}
       <motion.div
