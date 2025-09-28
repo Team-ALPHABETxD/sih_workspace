@@ -24,11 +24,11 @@ export default function ProfilePage() {
   useEffect(() => {
     if (user) {
       setProfileData({
-        name: user.user.name || "",
-        email: user.user.email || "",
-        occupation: user.user.occ || "",
-        age: user.user.age?.toString() || "",
-        gender: user.user.gender || ""
+        name: user.name || "",
+        email: user.email || "",
+        occupation: user.occ || "",
+        age: user.age?.toString() || "",
+        gender: user.gender || ""
       });
     }
   }, [user]);

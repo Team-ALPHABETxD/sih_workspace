@@ -3,12 +3,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { toast } from "react-toastify";
 interface User {
-  id: string;
+  _id: string;
   name?: string;
   email?: string;
   occ?: string;
   age?: number;
   gender?: string;
+  __v?: number;
 }
 
 interface SignupData {
@@ -47,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       if (res.ok) {
         const userData = await res.json();
-        setUser(userData);
+        setUser(userData.user);
       } else {
         setUser(null);
         localStorage.removeItem("token");
