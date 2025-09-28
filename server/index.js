@@ -9,7 +9,7 @@ const BASE_URL=process.env.FRONTEND_BASE_URL
 
 app.use(express.json())
 app.use(cors({ 
-    origin: `${BASE_URL}`,
+    origin: ['http://localhost:3000', `${BASE_URL}`],
     credentials: true,
  }))
  
