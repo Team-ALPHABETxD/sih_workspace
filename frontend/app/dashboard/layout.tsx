@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "../../components/ui/sidebar";
 import {
   IconArrowLeft,
@@ -12,7 +12,7 @@ import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
-import { Link } from "lucide-react";
+import Link from "next/link";
 
 const links = [
   {
@@ -58,13 +58,31 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  const { logout } = useAuth();
+  const { logout, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isAuthenticated, isLoading, router]);
 
   const handleLogout = () => {
     logout();
     router.push("/login");
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // or a redirect message, but since useEffect handles redirect
+  }
 
   return (
     <div
@@ -120,7 +138,7 @@ export default function DashboardLayout({
 export const Logo = () => {
   return (
     <Link
-      to="/"
+      href="/"
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-gray-700"
     >
       <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gray-700" />
@@ -138,7 +156,7 @@ export const Logo = () => {
 export const LogoIcon = () => {
   return (
     <Link
-      to="/dashboard"
+      href="/dashboard"
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-gray-700"
     >
       <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gray-700" />
