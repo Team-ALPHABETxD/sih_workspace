@@ -165,7 +165,7 @@ export default function RecentsPage() {
           // Extract timestamp from MongoDB _id (first 8 characters are timestamp)
           const timestamp = parseInt(report._id.substring(0, 8), 16) * 1000;
           const date = new Date(timestamp).toLocaleDateString();
-          const title = `Water Quality Report ${report._id.substring(18, 24).toUpperCase()}`;
+          const title = `Water Quality Report ${report._id?.substring(18, 24)?.toUpperCase() || "UNKNOWN"}`;
 
           return (
             <div key={report._id} className="group">

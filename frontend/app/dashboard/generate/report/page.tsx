@@ -344,9 +344,9 @@ const GeneratedReportPage: React.FC = () => {
                 </h3>
                 {report.anoms ? (
                   <>
-                    <p className="text-3xl font-bold text-orange-600 mb-2">
-                      {report.anoms.decision === "warn" ? "Warning" : report.anoms.decision.toUpperCase()}
-                    </p>
+                  <p className="text-3xl font-bold text-orange-600 mb-2">
+                    {report.anoms?.decision === "warn" ? "Warning" : (report.anoms?.decision?.toUpperCase() || "UNKNOWN")}
+                  </p>
                     {report.anoms.reasons && report.anoms.reasons.length > 0 ? (
                       <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
                         {report.anoms.reasons.map((reason: string, index: number) => (
